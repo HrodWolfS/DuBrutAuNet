@@ -1,0 +1,20 @@
+{
+  "lastUpdate": "2024-04-01T00:00:00.000Z",
+  "smic": {
+    "hourly": 11.65,
+    "monthly": 1766.92
+  },
+  "urssaf": {
+    "cdi": {
+      "employee": 0.22,
+      "employer": 0.42
+    },
+    "cdd": {
+      "employee": 0.22,
+      "employer": 0.45
+    }
+  },
+  "autoEntrepreneur": {
+    "services": 0.212
+  }
+}

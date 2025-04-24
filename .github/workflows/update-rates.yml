@@ -1,0 +1,47 @@
+name: Update Rates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *" # Exécution le 1er de chaque mois à minuit
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run scraper
+        run: pnpm run scrape
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "MAJ barème $(date +'%d/%m/%Y')"
+          title: "🤖 MAJ automatique des barèmes"
+          body: |
+            Mise à jour automatique des barèmes via le scraper.
+
+            - Date de mise à jour : $(date +'%d/%m/%Y')
+            - Déclencheur : ${{ github.event_name }}
+          branch: update/rates-auto
+          delete-branch: true
+          labels: |
+            automated
+            rates-update
