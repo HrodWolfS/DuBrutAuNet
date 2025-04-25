@@ -40,31 +40,66 @@ export interface Output {
 // TODO: Implémenter la vraie logique avec les taux
 export function convert(input: Input): Output {
   const ratio = input.direction === "brut" ? 0.78 : 1.22;
-  const amount = input.amount * ratio;
+  const baseAmount = input.amount;
+
+  // Conversion en montant horaire
+  let hourlyAmount: number;
+  switch (input.unit) {
+    case "hourly":
+      hourlyAmount = baseAmount;
+      break;
+    case "daily":
+      hourlyAmount = baseAmount / 7;
+      break;
+    case "monthly":
+      hourlyAmount = baseAmount / 151.67;
+      break;
+    case "yearly":
+      hourlyAmount = baseAmount / 1820;
+      break;
+  }
+
+  // Application du ratio brut/net
+  const convertedHourlyAmount =
+    input.direction === "brut" ? hourlyAmount * ratio : hourlyAmount / ratio;
+
+  // Calcul des autres montants
+  const dailyAmount = hourlyAmount * 7;
+  const monthlyAmount = hourlyAmount * 151.67;
+  const yearlyAmount = hourlyAmount * 1820;
+
+  const convertedDailyAmount =
+    input.direction === "brut" ? dailyAmount * ratio : dailyAmount / ratio;
+
+  const convertedMonthlyAmount =
+    input.direction === "brut" ? monthlyAmount * ratio : monthlyAmount / ratio;
+
+  const convertedYearlyAmount =
+    input.direction === "brut" ? yearlyAmount * ratio : yearlyAmount / ratio;
 
   return {
     brut: {
-      hourly: input.direction === "brut" ? input.amount : amount,
-      daily: input.direction === "brut" ? input.amount * 7 : amount * 7,
+      hourly: input.direction === "net" ? convertedHourlyAmount : hourlyAmount,
+      daily: input.direction === "net" ? convertedDailyAmount : dailyAmount,
       monthly:
-        input.direction === "brut" ? input.amount * 151.67 : amount * 151.67,
-      yearly: input.direction === "brut" ? input.amount * 1820 : amount * 1820,
+        input.direction === "net" ? convertedMonthlyAmount : monthlyAmount,
+      yearly: input.direction === "net" ? convertedYearlyAmount : yearlyAmount,
     },
     net: {
-      hourly: input.direction === "net" ? input.amount : amount,
-      daily: input.direction === "net" ? input.amount * 7 : amount * 7,
+      hourly: input.direction === "brut" ? convertedHourlyAmount : hourlyAmount,
+      daily: input.direction === "brut" ? convertedDailyAmount : dailyAmount,
       monthly:
-        input.direction === "net" ? input.amount * 151.67 : amount * 151.67,
-      yearly: input.direction === "net" ? input.amount * 1820 : amount * 1820,
+        input.direction === "brut" ? convertedMonthlyAmount : monthlyAmount,
+      yearly: input.direction === "brut" ? convertedYearlyAmount : yearlyAmount,
     },
     details: {
       urssaf: {
-        employee: amount * 0.22,
-        employer: amount * 0.42,
+        employee: monthlyAmount * 0.22,
+        employer: monthlyAmount * 0.42,
       },
-      csg: amount * 0.098,
-      crds: amount * 0.005,
-      total: amount * 0.743,
+      csg: monthlyAmount * 0.098,
+      crds: monthlyAmount * 0.005,
+      total: monthlyAmount * 0.743,
     },
   };
 }
