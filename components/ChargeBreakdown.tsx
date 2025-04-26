@@ -46,8 +46,9 @@ const CHARGES_LABELS = {
 
 interface Props {
   status: SalaryInput["status"];
-  brutAmount: number;
+  brutAmount?: number;
   taxRate: number;
+  annualNetWithPrime?: number | "";
 }
 
 function formatAmount(amount: number): string {
@@ -62,8 +63,21 @@ function formatPercentage(amount: number, total: number): string {
   return ((amount / total) * 100).toFixed(1) + "%";
 }
 
-export function ChargeBreakdown({ status, brutAmount, taxRate }: Props) {
+export function ChargeBreakdown({
+  status,
+  brutAmount,
+  taxRate,
+  annualNetWithPrime,
+}: Props) {
   const { title, items } = CHARGES_LABELS[status];
+  if (!brutAmount || isNaN(brutAmount)) {
+    return (
+      <Card className="p-6 space-y-4">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <div className="text-center text-muted-foreground">—</div>
+      </Card>
+    );
+  }
   const totalCharges = items.reduce((acc, { rate }) => acc + rate, 0);
   const totalChargesAmount = brutAmount * totalCharges;
   const taxAmount = (brutAmount - totalChargesAmount) * (taxRate / 100);
@@ -124,6 +138,17 @@ export function ChargeBreakdown({ status, brutAmount, taxRate }: Props) {
             })}
           </span>
         </div>
+        {annualNetWithPrime !== undefined && annualNetWithPrime !== "" && (
+          <div className="flex justify-between font-semibold pt-2">
+            <span>Net annuel après impôt</span>
+            <span>
+              {Number(annualNetWithPrime).toLocaleString("fr-FR", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </span>
+          </div>
+        )}
       </div>
     </Card>
   );

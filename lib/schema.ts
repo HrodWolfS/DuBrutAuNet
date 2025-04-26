@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const calculatorSchema = z.object({
-  amount: z.coerce
+export const formSchema = z.object({
+  amount: z
     .number()
     .min(0, "Le montant doit être positif")
     .max(1000000, "Le montant doit être inférieur à 1 000 000"),
@@ -17,11 +17,11 @@ export const calculatorSchema = z.object({
       required_error: "Veuillez sélectionner un statut",
     }
   ),
-  hoursPerWeek: z.coerce
+  hoursPerWeek: z
     .number()
-    .min(1, "Le nombre d'heures doit être positif")
+    .min(0, "Le nombre d'heures doit être positif")
     .max(50, "Le nombre d'heures doit être inférieur à 50")
     .optional(),
 });
 
-export type CalculatorInput = z.infer<typeof calculatorSchema>;
+export type CalculatorInput = z.infer<typeof formSchema>;

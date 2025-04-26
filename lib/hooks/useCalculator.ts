@@ -1,51 +1,11 @@
 import { type Input as SalaryInput } from "@/lib/convert";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 type Period = "hourly" | "daily" | "monthly" | "yearly";
 type Direction = "brut" | "net";
 
-interface CalculatorState {
-  values: Record<Direction, Record<Period, string>>;
-  status: SalaryInput["status"];
-  taxRate: number;
-  hoursPerWeek: number;
-}
-
-interface CalculatorActions {
-  handleValueChange: (
-    value: string,
-    period: Period,
-    direction: Direction
-  ) => void;
-  setStatus: (status: SalaryInput["status"]) => void;
-  setTaxRate: (rate: number) => void;
-  setHoursPerWeek: (hours: number) => void;
-}
-
-const CONVERSION_RATES = {
-  hourly: {
-    daily: 7,
-    monthly: 151.67, // 35h * 52 semaines / 12 mois
-    yearly: 1820, // 35h * 52 semaines
-  },
-  daily: {
-    hourly: 1 / 7,
-    monthly: 21.67, // 151.67 / 7
-    yearly: 260, // 52 semaines * 5 jours
-  },
-  monthly: {
-    hourly: 1 / 151.67,
-    daily: 1 / 21.67,
-    yearly: 12,
-  },
-  yearly: {
-    hourly: 1 / 1820,
-    daily: 1 / 260,
-    monthly: 1 / 12,
-  },
-} as const;
-
-type ConversionRates = typeof CONVERSION_RATES;
+const SMIC_2025 = 11.65;
+const DEFAULT_HOURS = 35;
 
 const CHARGES_SOCIALES = {
   CDI: 0.22,
@@ -55,131 +15,158 @@ const CHARGES_SOCIALES = {
   AUTO_ENTREPRENEUR: 0.22,
 };
 
-export function useCalculator(): [CalculatorState, CalculatorActions] {
-  const [state, setState] = useState<CalculatorState>({
-    values: {
-      brut: {
-        hourly: "",
-        daily: "",
-        monthly: "",
-        yearly: "",
-      },
-      net: {
-        hourly: "",
-        daily: "",
-        monthly: "",
-        yearly: "",
-      },
+function brutFromNet(net: number, charges: number, tax: number) {
+  // Inverse de net = brut * (1-charges) * (1-tax)
+  return net / ((1 - charges) * (1 - tax));
+}
+
+export function useCalculator() {
+  const [status, setStatus] = useState<SalaryInput["status"]>("CDI");
+  const [taxRate, setTaxRate] = useState(14);
+  const [workPercent, setWorkPercent] = useState(100);
+  const [prime, setPrime] = useState(0);
+  // Source de vérité : { direction, period, value }
+  // value est toujours la valeur brute non formatée
+  const [input, setInput] = useState<{
+    direction: Direction;
+    period: Period;
+    value: number | string;
+  }>({ direction: "brut", period: "hourly", value: SMIC_2025 });
+
+  const hoursPerWeek = useMemo(
+    () => Math.round((DEFAULT_HOURS * workPercent) / 100),
+    [workPercent]
+  );
+  const charges = CHARGES_SOCIALES[status];
+  const tax = taxRate / 100;
+
+  // Conversion helpers
+  const getBrutFrom = useCallback(
+    (value: number, period: Period) => {
+      if (period === "hourly") return value;
+      if (period === "daily")
+        return hoursPerWeek ? value / (hoursPerWeek / 7) : 0;
+      if (period === "monthly")
+        return hoursPerWeek ? value / ((hoursPerWeek * 52) / 12) : 0;
+      if (period === "yearly")
+        return hoursPerWeek ? value / (hoursPerWeek * 52) : 0;
+      return value;
     },
-    status: "CDI",
-    taxRate: 14,
-    hoursPerWeek: 35,
-  });
+    [hoursPerWeek]
+  );
 
-  const convertValue = useCallback(
-    (value: string, fromPeriod: Period, toPeriod: Period): string => {
-      if (!value || isNaN(Number(value))) return "";
-      const numValue = Number(value);
-      if (fromPeriod === toPeriod) return value;
+  // Calculs principaux
+  const { hourlyBrut, dailyBrut, monthlyBrut, yearlyBrut } = useMemo(() => {
+    if (input.value === "" || isNaN(Number(input.value))) {
+      return { hourlyBrut: 0, dailyBrut: 0, monthlyBrut: 0, yearlyBrut: 0 };
+    }
+    let baseBrut: number;
+    if (input.direction === "brut") {
+      baseBrut = getBrutFrom(Number(input.value), input.period);
+    } else {
+      const net = Number(input.value);
+      const brut = brutFromNet(net, charges, tax);
+      baseBrut = getBrutFrom(brut, input.period);
+    }
+    return {
+      hourlyBrut: baseBrut,
+      dailyBrut: baseBrut * (hoursPerWeek / 7),
+      monthlyBrut: (baseBrut * hoursPerWeek * 52) / 12,
+      yearlyBrut: baseBrut * hoursPerWeek * 52,
+    };
+  }, [input, charges, tax, getBrutFrom, hoursPerWeek]);
 
-      const rates = CONVERSION_RATES[fromPeriod] as Record<Period, number>;
-      const rate = rates[toPeriod] ?? 1;
-      return (numValue * rate).toFixed(2);
+  // Net = brut - charges - impôt
+  const calcNet = useCallback(
+    (brut: number | string) => {
+      if (brut === "" || isNaN(Number(brut))) return 0;
+      const afterCharges = Number(brut) * (1 - charges);
+      const afterTax = afterCharges * (1 - tax);
+      return afterTax;
+    },
+    [charges, tax]
+  );
+
+  const hourlyNet = useMemo(() => calcNet(hourlyBrut), [hourlyBrut, calcNet]);
+  const dailyNet = useMemo(() => calcNet(dailyBrut), [dailyBrut, calcNet]);
+  const monthlyNet = useMemo(
+    () => calcNet(monthlyBrut),
+    [monthlyBrut, calcNet]
+  );
+  const yearlyNet = useMemo(() => calcNet(yearlyBrut), [yearlyBrut, calcNet]);
+  const annualNetWithPrime = useMemo(
+    () => Number(yearlyNet) + Number(prime || 0),
+    [yearlyNet, prime]
+  );
+
+  // Valeurs pour l'interface utilisateur - non formatées
+  // Cela permet d'utiliser ces valeurs brutes pour la saisie
+  const values = {
+    brut: {
+      hourly:
+        input.direction === "brut" && input.period === "hourly"
+          ? input.value.toString()
+          : hourlyBrut,
+      daily:
+        input.direction === "brut" && input.period === "daily"
+          ? input.value.toString()
+          : dailyBrut,
+      monthly:
+        input.direction === "brut" && input.period === "monthly"
+          ? input.value.toString()
+          : monthlyBrut,
+      yearly:
+        input.direction === "brut" && input.period === "yearly"
+          ? input.value.toString()
+          : yearlyBrut,
+    },
+    net: {
+      hourly: hourlyNet,
+      daily: dailyNet,
+      monthly: monthlyNet,
+      yearly: yearlyNet,
+    },
+    // Valeurs numériques brutes pour les calculs
+    rawBrut: {
+      hourly: hourlyBrut,
+      daily: dailyBrut,
+      monthly: monthlyBrut,
+      yearly: yearlyBrut,
+    },
+    rawNet: {
+      hourly: hourlyNet,
+      daily: dailyNet,
+      monthly: monthlyNet,
+      yearly: yearlyNet,
+    },
+  };
+
+  const handleValueChange = useCallback(
+    (value: string, period: Period, direction: Direction) => {
+      // Traiter la valeur entrée comme une chaîne brute
+      // Nettoyer uniquement les caractères non numériques, mais garder le point ou la virgule
+      const cleanValue = value.replace(/[^\d.,]/g, "").replace(/,/g, ".");
+      setInput({ direction, period, value: cleanValue });
     },
     []
   );
 
-  const convertBrutToNet = useCallback(
-    (brutValue: string): string => {
-      if (!brutValue || isNaN(Number(brutValue))) return "";
-      const numValue = Number(brutValue);
-      const chargesSociales = CHARGES_SOCIALES[state.status];
-      const taxRate = state.taxRate / 100;
-
-      // Déduction des charges sociales puis de l'impôt
-      const afterCharges = numValue * (1 - chargesSociales);
-      const afterTax = afterCharges * (1 - taxRate);
-
-      return afterTax.toFixed(2);
-    },
-    [state.status, state.taxRate]
-  );
-
-  const convertNetToBrut = useCallback(
-    (netValue: string): string => {
-      if (!netValue || isNaN(Number(netValue))) return "";
-      const numValue = Number(netValue);
-      const chargesSociales = CHARGES_SOCIALES[state.status];
-      const taxRate = state.taxRate / 100;
-
-      // On remonte de l'impôt puis des charges sociales
-      const beforeTax = numValue / (1 - taxRate);
-      const beforeCharges = beforeTax / (1 - chargesSociales);
-
-      return beforeCharges.toFixed(2);
-    },
-    [state.status, state.taxRate]
-  );
-
-  const handleValueChange = useCallback(
-    (value: string, period: Period, direction: Direction) => {
-      setState((prev) => {
-        const newValues = { ...prev.values };
-
-        // Mise à jour de la valeur modifiée
-        newValues[direction][period] = value;
-
-        // Conversion pour toutes les périodes
-        const periods: Period[] = ["hourly", "daily", "monthly", "yearly"];
-        periods.forEach((toPeriod) => {
-          if (toPeriod !== period) {
-            newValues[direction][toPeriod] = convertValue(
-              value,
-              period,
-              toPeriod
-            );
-          }
-        });
-
-        // Conversion brut/net
-        const otherDirection = direction === "brut" ? "net" : "brut";
-        const converter =
-          direction === "brut" ? convertBrutToNet : convertNetToBrut;
-
-        periods.forEach((toPeriod) => {
-          newValues[otherDirection][toPeriod] = converter(
-            newValues[direction][toPeriod]
-          );
-        });
-
-        return {
-          ...prev,
-          values: newValues,
-        };
-      });
-    },
-    [convertValue, convertBrutToNet, convertNetToBrut]
-  );
-
-  const setStatus = useCallback((status: SalaryInput["status"]) => {
-    setState((prev) => ({ ...prev, status }));
-  }, []);
-
-  const setTaxRate = useCallback((rate: number) => {
-    setState((prev) => ({ ...prev, taxRate: rate }));
-  }, []);
-
-  const setHoursPerWeek = useCallback((hours: number) => {
-    setState((prev) => ({ ...prev, hoursPerWeek: hours }));
-  }, []);
-
   return [
-    state,
+    {
+      values,
+      status,
+      taxRate,
+      workPercent,
+      hoursPerWeek,
+      prime,
+      annualNetWithPrime,
+    },
     {
       handleValueChange,
       setStatus,
       setTaxRate,
-      setHoursPerWeek,
+      setWorkPercent,
+      setPrime,
     },
-  ];
+  ] as const;
 }
