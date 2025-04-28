@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
-import { useCalculator } from "@/lib/hooks/useCalculator";
+import { StatusType, useCalculator } from "@/lib/hooks/useCalculator";
 import { formSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -29,6 +29,7 @@ export default function CalculatorForm() {
       hoursPerWeek,
       prime,
       annualNetWithPrime,
+      monthlyNetAfterTax,
     },
     { handleValueChange, setStatus, setTaxRate, setWorkPercent, setPrime },
   ] = useCalculator();
@@ -41,7 +42,7 @@ export default function CalculatorForm() {
       amount: 11.65,
       unit: "hourly",
       direction: "brut",
-      status: "CDI",
+      status: "NON_CADRE",
       hoursPerWeek: 35,
     },
   });
@@ -61,36 +62,17 @@ export default function CalculatorForm() {
   // Réinitialiser tous les champs
   const resetForm = () => {
     form.reset({
-      amount: 0,
+      amount: 11.65,
       unit: "hourly",
       direction: "brut",
-      status: "CDI",
+      status: "NON_CADRE",
       hoursPerWeek: 35,
     });
     handleValueChange("0", "hourly", "brut");
-    setStatus("CDI");
+    setStatus("NON_CADRE");
     setWorkPercent(100);
     setTaxRate(0);
     setPrime(0);
-  };
-
-  // Mettre à jour le statut
-  const handleStatusChange = (newStatus: string) => {
-    const mappedStatus = {
-      "non-cadre": "CDI",
-      cadre: "CDD",
-      "fonction-publique": "FONCTION_PUBLIQUE",
-      "profession-liberale": "AUTO_ENTREPRENEUR",
-      "portage-salarial": "AUTO_ENTREPRENEUR",
-    }[newStatus] as
-      | "CDI"
-      | "CDD"
-      | "FONCTION_PUBLIQUE"
-      | "ALTERNANCE"
-      | "AUTO_ENTREPRENEUR";
-
-    setStatus(mappedStatus);
-    form.setValue("status", mappedStatus);
   };
 
   // Remplace formatNumber par une version qui gère le fixed(0) pour mensuel/annuel
@@ -116,18 +98,10 @@ export default function CalculatorForm() {
     });
   };
 
-  // Synchroniser hoursPerWeek avec workPercent
-  useEffect(() => {
-    const hours = form.getValues("hoursPerWeek");
-    if (hours) {
-      setWorkPercent((hours / 35) * 100);
-    }
-  }, [form.watch("hoursPerWeek"), setWorkPercent]);
-
   // Synchroniser workPercent avec UI
   useEffect(() => {
     form.setValue("hoursPerWeek", Math.round((35 * workPercent) / 100));
-  }, [workPercent, form]);
+  }, [hoursPerWeek, form]);
 
   return (
     <div className="w-full mx-auto" style={{ perspective: "1000px" }}>
@@ -188,7 +162,7 @@ export default function CalculatorForm() {
                     <Label htmlFor="monthly-brut" className="text-sm">
                       Mensuel brut
                     </Label>
-                    {status === "CDI" && (
+                    {status === "NON_CADRE" && (
                       <span className="text-xs bg-[var(--accent)] text-[var(--accent-foreground)] px-3 py-1 rounded-xl font-medium">
                         Non-cadre -22%
                       </span>
@@ -325,23 +299,23 @@ export default function CalculatorForm() {
           </CardHeader>
           <CardContent>
             <RadioGroup
-              defaultValue="non-cadre"
+              defaultValue="NON_CADRE"
               className="grid grid-cols-3 gap-4 mt-2"
-              onValueChange={handleStatusChange}
+              onValueChange={(e) => setStatus(e as StatusType)}
             >
               <div
                 className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
                 style={{
                   boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.05)",
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
                 }}
               >
                 <RadioGroupItem
-                  value="non-cadre"
-                  id="non-cadre"
+                  value="NON_CADRE"
+                  id="NON_CADRE"
                   className="text-primary"
                 />
-                <Label htmlFor="non-cadre" className="text-sm font-medium">
+                <Label htmlFor="NON_CADRE" className="text-sm font-medium">
                   Salarié non-cadre
                 </Label>
               </div>
@@ -349,15 +323,15 @@ export default function CalculatorForm() {
                 className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
                 style={{
                   boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.05)",
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
                 }}
               >
                 <RadioGroupItem
-                  value="cadre"
-                  id="cadre"
+                  value="CADRE"
+                  id="CADRE"
                   className="text-primary"
                 />
-                <Label htmlFor="cadre" className="text-sm font-medium">
+                <Label htmlFor="CADRE" className="text-sm font-medium">
                   Salarié cadre
                 </Label>
               </div>
@@ -365,16 +339,16 @@ export default function CalculatorForm() {
                 className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
                 style={{
                   boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.05)",
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
                 }}
               >
                 <RadioGroupItem
-                  value="fonction-publique"
-                  id="fonction-publique"
+                  value="FONCTION_PUBLIQUE"
+                  id="FONCTION_PUBLIQUE"
                   className="text-primary"
                 />
                 <Label
-                  htmlFor="fonction-publique"
+                  htmlFor="FONCTION_PUBLIQUE"
                   className="text-sm font-medium"
                 >
                   Fonction publique
@@ -384,16 +358,16 @@ export default function CalculatorForm() {
                 className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
                 style={{
                   boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.05)",
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
                 }}
               >
                 <RadioGroupItem
-                  value="profession-liberale"
-                  id="profession-liberale"
+                  value="PROFESSION_LIBERALE"
+                  id="PROFESSION_LIBERALE"
                   className="text-primary"
                 />
                 <Label
-                  htmlFor="profession-liberale"
+                  htmlFor="PROFESSION_LIBERALE"
                   className="text-sm font-medium"
                 >
                   Profession libérale
@@ -403,16 +377,35 @@ export default function CalculatorForm() {
                 className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
                 style={{
                   boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.05)",
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
                 }}
               >
                 <RadioGroupItem
-                  value="portage-salarial"
-                  id="portage-salarial"
+                  value="AUTO_ENTREPRENEUR"
+                  id="AUTO_ENTREPRENEUR"
                   className="text-primary"
                 />
                 <Label
-                  htmlFor="portage-salarial"
+                  htmlFor="AUTO_ENTREPRENEUR"
+                  className="text-sm font-medium"
+                >
+                  Auto-entrepreneur
+                </Label>
+              </div>
+              <div
+                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
+                style={{
+                  boxShadow:
+                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
+                }}
+              >
+                <RadioGroupItem
+                  value="PORTAGE_SALARIAL"
+                  id="PORTAGE_SALARIAL"
+                  className="text-primary"
+                />
+                <Label
+                  htmlFor="PORTAGE_SALARIAL"
                   className="text-sm font-medium"
                 >
                   Portage salarial
@@ -475,19 +468,29 @@ export default function CalculatorForm() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label>Temps de travail</Label>
-                <span className="font-medium">{workPercent}%</span>
+                <span className="font-medium">
+                  {Math.round((hoursPerWeek / 35) * 100)}%
+                </span>
               </div>
+
               <Slider
-                defaultValue={[100]}
-                max={100}
+                min={0}
+                max={48}
                 step={1}
-                value={[workPercent]}
-                onValueChange={(values) => setWorkPercent(values[0])}
+                defaultValue={[35]}
+                value={[hoursPerWeek]}
+                onValueChange={(values) => {
+                  const h = values[0];
+                  // met à jour le formulaire et l'état global
+                  form.setValue("hoursPerWeek", h);
+                  setWorkPercent((h / 35) * 100);
+                }}
                 className="mt-2"
                 style={{ height: "8px" }}
               />
+
               <div className="text-xs text-muted-foreground text-right">
-                {hoursPerWeek} heures/semaine
+                {hoursPerWeek} heures/semaine
               </div>
             </div>
 
@@ -539,7 +542,7 @@ export default function CalculatorForm() {
                         "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
                     }}
                     value={formatNumberSmart(
-                      values.net.monthly * (1 - taxRate / 100),
+                      monthlyNetAfterTax,
                       "monthly-after-tax"
                     )}
                     readOnly
@@ -565,6 +568,22 @@ export default function CalculatorForm() {
                   />
                 </div>
               </div>
+            </div>
+            <div className="pt-4 border-t mt-4">
+              <span className="text-lg font-medium">
+                Cotisations sociales :{" "}
+                {Math.round(
+                  ({
+                    NON_CADRE: 0.22,
+                    CADRE: 0.22,
+                    FONCTION_PUBLIQUE: 0.15,
+                    AUTO_ENTREPRENEUR: 0.22,
+                    PORTAGE_SALARIAL: 0.22,
+                    PROFESSION_LIBERALE: 0.246,
+                  }[status] || 0) * 100
+                )}{" "}
+                %
+              </span>
             </div>
           </CardContent>
         </Card>

@@ -12,7 +12,14 @@ export const formSchema = z.object({
     required_error: "Veuillez sélectionner brut ou net",
   }),
   status: z.enum(
-    ["CDI", "CDD", "FONCTION_PUBLIQUE", "ALTERNANCE", "AUTO_ENTREPRENEUR"],
+    [
+      "NON_CADRE",
+      "CADRE",
+      "FONCTION_PUBLIQUE",
+      "AUTO_ENTREPRENEUR",
+      "PORTAGE_SALARIAL",
+      "PROFESSION_LIBERALE",
+    ],
     {
       required_error: "Veuillez sélectionner un statut",
     }

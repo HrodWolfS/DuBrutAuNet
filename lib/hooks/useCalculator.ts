@@ -1,19 +1,29 @@
-import { type Input as SalaryInput } from "@/lib/convert";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Period = "hourly" | "daily" | "monthly" | "yearly";
 type Direction = "brut" | "net";
+export type StatusType =
+  | "NON_CADRE"
+  | "CADRE"
+  | "FONCTION_PUBLIQUE"
+  | "AUTO_ENTREPRENEUR"
+  | "PORTAGE_SALARIAL"
+  | "PROFESSION_LIBERALE";
+
+type RateJson = {
+  [key in keyof typeof DEFAULT_CHARGES]: { employee: number };
+};
 
 const SMIC_2025 = 11.65;
 const DEFAULT_HOURS = 35;
 
-const CHARGES_SOCIALES = {
+const DEFAULT_CHARGES = {
   NON_CADRE: 0.22,
   CADRE: 0.22,
   FONCTION_PUBLIQUE: 0.15,
-  ALTERNANCE: 0.12,
   AUTO_ENTREPRENEUR: 0.22,
   PORTAGE_SALARIAL: 0.22,
+  PROFESSION_LIBERALE: 0.45,
 };
 
 function brutFromNet(net: number, charges: number, tax: number) {
@@ -22,7 +32,7 @@ function brutFromNet(net: number, charges: number, tax: number) {
 }
 
 export function useCalculator() {
-  const [status, setStatus] = useState<SalaryInput["status"]>("CDI");
+  const [status, setStatus] = useState<StatusType>("NON_CADRE");
   const [taxRate, setTaxRate] = useState(14);
   const [workPercent, setWorkPercent] = useState(100);
   const [prime, setPrime] = useState(0);
@@ -33,13 +43,37 @@ export function useCalculator() {
     period: Period;
     value: number | string;
   }>({ direction: "brut", period: "hourly", value: SMIC_2025 });
+  const [rates, setRates] = useState<RateJson | null>(null);
 
   const hoursPerWeek = useMemo(
     () => Math.round((DEFAULT_HOURS * workPercent) / 100),
     [workPercent]
   );
-  const charges = CHARGES_SOCIALES[status];
+  const charges = rates?.[status]?.employee ?? DEFAULT_CHARGES[status];
   const tax = taxRate / 100;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const mod = await import("../../data/rates_fr_2025.json");
+        if (mod && mod.rates) {
+          // Merge pour garantir toutes les clés
+          const merged: RateJson = Object.keys(DEFAULT_CHARGES).reduce(
+            (acc, key) => {
+              acc[key as keyof RateJson] = mod.rates[key as keyof RateJson] ?? {
+                employee: DEFAULT_CHARGES[key as keyof typeof DEFAULT_CHARGES],
+              };
+              return acc;
+            },
+            {} as RateJson
+          );
+          setRates(merged);
+        }
+      } catch {
+        // silent fallback
+      }
+    })();
+  }, []);
 
   // Conversion helpers
   const getBrutFrom = useCallback(
@@ -77,15 +111,13 @@ export function useCalculator() {
     };
   }, [input, charges, tax, getBrutFrom, hoursPerWeek]);
 
-  // Net = brut - charges - impôt
+  // Net = brut - charges (sans impôt)
   const calcNet = useCallback(
     (brut: number | string) => {
       if (brut === "" || isNaN(Number(brut))) return 0;
-      const afterCharges = Number(brut) * (1 - charges);
-      const afterTax = afterCharges * (1 - tax);
-      return afterTax;
+      return Number(brut) * (1 - charges);
     },
-    [charges, tax]
+    [charges]
   );
 
   const hourlyNet = useMemo(() => calcNet(hourlyBrut), [hourlyBrut, calcNet]);
@@ -95,9 +127,19 @@ export function useCalculator() {
     [monthlyBrut, calcNet]
   );
   const yearlyNet = useMemo(() => calcNet(yearlyBrut), [yearlyBrut, calcNet]);
+
+  // Net après impôt (pour la card Résultat uniquement)
+  const monthlyNetAfterTax = useMemo(
+    () => calcNet(monthlyBrut) * (1 - tax),
+    [monthlyBrut, calcNet, tax]
+  );
+  const yearlyNetAfterTax = useMemo(
+    () => calcNet(yearlyBrut) * (1 - tax),
+    [yearlyBrut, calcNet, tax]
+  );
   const annualNetWithPrime = useMemo(
-    () => Number(yearlyNet) + Number(prime || 0),
-    [yearlyNet, prime]
+    () => Number(yearlyNetAfterTax) + Number(prime || 0),
+    [yearlyNetAfterTax, prime]
   );
 
   // Valeurs pour l'interface utilisateur - non formatées
@@ -161,6 +203,8 @@ export function useCalculator() {
       hoursPerWeek,
       prime,
       annualNetWithPrime,
+      monthlyNetAfterTax,
+      yearlyNetAfterTax,
     },
     {
       handleValueChange,

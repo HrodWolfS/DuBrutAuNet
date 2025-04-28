@@ -3,11 +3,12 @@ export interface Input {
   unit: "hourly" | "daily" | "monthly" | "yearly";
   direction: "brut" | "net";
   status:
-    | "CDI"
-    | "CDD"
+    | "NON_CADRE"
+    | "CADRE"
     | "FONCTION_PUBLIQUE"
-    | "ALTERNANCE"
-    | "AUTO_ENTREPRENEUR";
+    | "AUTO_ENTREPRENEUR"
+    | "PORTAGE_SALARIAL"
+    | "PROFESSION_LIBERALE";
   hoursPerWeek?: number;
 }
 
