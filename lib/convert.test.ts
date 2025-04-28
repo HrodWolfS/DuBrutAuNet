@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { convert, type Input } from "@/lib/convert";
 import rates from "@/data/rates_fr_2025.json";
+import { convert } from "@/lib/convert";
+import { describe, expect, it } from "vitest";
 
 type Status =
   | "NON_CADRE"
@@ -16,7 +16,7 @@ const brutToNet = (amount: number, status: Status) =>
 const netToBrut = (amount: number, status: Status) =>
   +(amount / (1 - rates.rates[status].employee)).toFixed(2);
 
-/* -------- 1. table-driven tests brut → net ------------------------------ */
+/* -------- brut ➜ net --------------------------------------------------- */
 describe.each<Status>([
   "NON_CADRE",
   "CADRE",
@@ -25,20 +25,18 @@ describe.each<Status>([
   "AUTO_ENTREPRENEUR",
   "PROFESSION_LIBERALE",
 ])("convert — brut ➜ net (%s)", (status) => {
-  const input: Input = {
-    amount: 100, // 100 € brut horaire pour un test simple
-    unit: "hourly",
-    direction: "brut",
-    status,
-  };
-
-  it(`calcule un net horaire cohérent pour ${status}`, () => {
-    const { net } = convert(input);
-    expect(net.hourly).toBeCloseTo(brutToNet(input.amount, status), 2);
+  it("calcule correctement le net horaire", () => {
+    const result = convert({
+      amount: 100,
+      unit: "hourly",
+      direction: "brut",
+      status,
+    });
+    expect(result.net.hourly).toBeCloseTo(brutToNet(100, status), 2);
   });
 });
 
-/* -------- 2. table-driven tests net → brut ------------------------------ */
+/* -------- net ➜ brut --------------------------------------------------- */
 describe.each<Status>([
   "NON_CADRE",
   "CADRE",
@@ -47,45 +45,38 @@ describe.each<Status>([
   "AUTO_ENTREPRENEUR",
   "PROFESSION_LIBERALE",
 ])("convert — net ➜ brut (%s)", (status) => {
-  const input: Input = {
-    amount: 100, // 100 € net horaire
-    unit: "hourly",
-    direction: "net",
-    status,
-  };
-
-  it(`calcule un brut horaire cohérent pour ${status}`, () => {
-    const { brut } = convert(input);
-    expect(brut.hourly).toBeCloseTo(netToBrut(input.amount, status), 2);
+  it("calcule correctement le brut horaire", () => {
+    const result = convert({
+      amount: 100,
+      unit: "hourly",
+      direction: "net",
+      status,
+    });
+    expect(result.brut.hourly).toBeCloseTo(netToBrut(100, status), 2);
   });
 });
 
-/* -------- 3. custom weekly hours (40 h) --------------------------------- */
-it("gère un temps plein à 40 h/semaine", () => {
-  const input: Input = {
-    amount: 20, // 20 € brut horaire
+/* -------- semaine 40 h -------------------------------------------------- */
+it("gère un plein temps 40 h/semaine", () => {
+  const res = convert({
+    amount: 20,
     unit: "hourly",
     direction: "brut",
     status: "NON_CADRE",
     hoursPerWeek: 40,
-  };
-
-  const { brut } = convert(input);
-  // 20 € × 40 h × 52 semaines / 12 ≈ 3466,67 € mensuel
-  expect(brut.monthly).toBeCloseTo(3466.67, 2);
+  });
+  const expected = (20 * 40 * 52) / 12; // 3466,67
+  expect(res.brut.monthly).toBeCloseTo(expected, 2);
 });
 
-/* -------- 4. prime exceptionnelle intégrée dans l’annuel ---------------- */
-it("intègre correctement la prime exceptionnelle dans l’annuel", () => {
-  const input: Input = {
-    amount: 3000, // 3 000 € brut mensuel
+/* -------- prime exceptionnelle ----------------------------------------- */
+it("intègre la prime exceptionnelle dans l'annuel", () => {
+  const res = convert({
+    amount: 3000,
     unit: "monthly",
     direction: "brut",
     status: "CADRE",
-    prime: 4000, // 4 000 € brut de prime
-  };
-
-  const { brut } = convert(input);
-  // annuel brut = 3 000 × 12 + 4 000 = 40 000
-  expect(brut.yearly).toBe(40000);
+    prime: 4000,
+  });
+  expect(res.brut.yearly).toBe(40000);
 });

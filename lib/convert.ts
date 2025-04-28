@@ -1,3 +1,5 @@
+import ratesTable from "@/data/rates_fr_2025.json";
+
 export interface Input {
   amount: number;
   unit: "hourly" | "daily" | "monthly" | "yearly";
@@ -10,6 +12,7 @@ export interface Input {
     | "PORTAGE_SALARIAL"
     | "PROFESSION_LIBERALE";
   hoursPerWeek?: number;
+  prime?: number;
 }
 
 export interface ChargeBreakdown {
@@ -38,69 +41,80 @@ export interface Output {
   details?: ChargeBreakdown;
 }
 
-// TODO: Implémenter la vraie logique avec les taux
-export function convert(input: Input): Output {
-  const ratio = input.direction === "brut" ? 0.78 : 1.22;
-  const baseAmount = input.amount;
+export const DEFAULT_HOURS = 35;
+const WEEKS_PER_YEAR = 52;
+const MONTHS_PER_YEAR = 12;
 
-  // Conversion en montant horaire
-  let hourlyAmount: number;
-  switch (input.unit) {
-    case "hourly":
-      hourlyAmount = baseAmount;
-      break;
-    case "daily":
-      hourlyAmount = baseAmount / 7;
-      break;
-    case "monthly":
-      hourlyAmount = baseAmount / 151.67;
-      break;
-    case "yearly":
-      hourlyAmount = baseAmount / 1820;
-      break;
+export function convert(input: Input): Output {
+  const {
+    amount,
+    unit,
+    direction,
+    status,
+    hoursPerWeek = DEFAULT_HOURS,
+    prime = 0,
+  } = input;
+
+  const rate =
+    ratesTable.rates?.[status as keyof typeof ratesTable.rates]?.employee ??
+    0.22;
+
+  // helpers
+  const toNet = (brut: number) => +(brut * (1 - rate)).toFixed(2);
+  const toBrut = (net: number) => +(net / (1 - rate)).toFixed(2);
+
+  // ↓ 1. Normalise l'entrée en brut & net horaire
+  let brutHourly: number;
+  let netHourly: number;
+
+  if (direction === "brut") {
+    if (unit === "hourly") brutHourly = amount;
+    else if (unit === "daily") brutHourly = amount / 7;
+    else if (unit === "monthly")
+      brutHourly = amount / ((hoursPerWeek * WEEKS_PER_YEAR) / MONTHS_PER_YEAR);
+    else brutHourly = amount / (hoursPerWeek * WEEKS_PER_YEAR); // yearly
+
+    netHourly = toNet(brutHourly);
+  } else {
+    // direction === "net"
+    if (unit === "hourly") netHourly = amount;
+    else if (unit === "daily") netHourly = amount / 7;
+    else if (unit === "monthly")
+      netHourly = amount / ((hoursPerWeek * WEEKS_PER_YEAR) / MONTHS_PER_YEAR);
+    else netHourly = amount / (hoursPerWeek * WEEKS_PER_YEAR);
+
+    brutHourly = toBrut(netHourly);
   }
 
-  // Application du ratio brut/net
-  const convertedHourlyAmount =
-    input.direction === "brut" ? hourlyAmount * ratio : hourlyAmount / ratio;
+  // ↓ 2. Dérive toutes les granularités
+  const hYear = hoursPerWeek * WEEKS_PER_YEAR;
+  const hMonth = hYear / MONTHS_PER_YEAR;
 
-  // Calcul des autres montants
-  const dailyAmount = hourlyAmount * 7;
-  const monthlyAmount = hourlyAmount * 151.67;
-  const yearlyAmount = hourlyAmount * 1820;
-
-  const convertedDailyAmount =
-    input.direction === "brut" ? dailyAmount * ratio : dailyAmount / ratio;
-
-  const convertedMonthlyAmount =
-    input.direction === "brut" ? monthlyAmount * ratio : monthlyAmount / ratio;
-
-  const convertedYearlyAmount =
-    input.direction === "brut" ? yearlyAmount * ratio : yearlyAmount / ratio;
-
-  return {
-    brut: {
-      hourly: input.direction === "net" ? convertedHourlyAmount : hourlyAmount,
-      daily: input.direction === "net" ? convertedDailyAmount : dailyAmount,
-      monthly:
-        input.direction === "net" ? convertedMonthlyAmount : monthlyAmount,
-      yearly: input.direction === "net" ? convertedYearlyAmount : yearlyAmount,
-    },
-    net: {
-      hourly: input.direction === "brut" ? convertedHourlyAmount : hourlyAmount,
-      daily: input.direction === "brut" ? convertedDailyAmount : dailyAmount,
-      monthly:
-        input.direction === "brut" ? convertedMonthlyAmount : monthlyAmount,
-      yearly: input.direction === "brut" ? convertedYearlyAmount : yearlyAmount,
-    },
-    details: {
-      urssaf: {
-        employee: monthlyAmount * 0.22,
-        employer: monthlyAmount * 0.42,
-      },
-      csg: monthlyAmount * 0.098,
-      crds: monthlyAmount * 0.005,
-      total: monthlyAmount * 0.743,
-    },
+  const brut = {
+    hourly: +brutHourly.toFixed(2),
+    daily: +(brutHourly * 7).toFixed(2),
+    monthly: +(brutHourly * hMonth).toFixed(2),
+    yearly: +(brutHourly * hYear + prime).toFixed(2),
   };
+
+  const net = {
+    hourly: +netHourly.toFixed(2),
+    daily: +(netHourly * 7).toFixed(2),
+    monthly: +(netHourly * hMonth).toFixed(2),
+    yearly: +(netHourly * hYear + prime * (1 - rate)).toFixed(2),
+  };
+
+  // Calcul des détails des charges pour compatibilité avec l'interface
+  const monthlyBrut = brut.monthly;
+  const details = {
+    urssaf: {
+      employee: +(monthlyBrut * rate).toFixed(2),
+      employer: +(monthlyBrut * 0.42).toFixed(2),
+    },
+    csg: +(monthlyBrut * 0.098).toFixed(2),
+    crds: +(monthlyBrut * 0.005).toFixed(2),
+    total: +(monthlyBrut * 0.743).toFixed(2),
+  };
+
+  return { brut, net, details };
 }
