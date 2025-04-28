@@ -8,11 +8,12 @@ const SMIC_2025 = 11.65;
 const DEFAULT_HOURS = 35;
 
 const CHARGES_SOCIALES = {
-  CDI: 0.22,
-  CDD: 0.22,
+  NON_CADRE: 0.22,
+  CADRE: 0.22,
   FONCTION_PUBLIQUE: 0.15,
   ALTERNANCE: 0.12,
   AUTO_ENTREPRENEUR: 0.22,
+  PORTAGE_SALARIAL: 0.22,
 };
 
 function brutFromNet(net: number, charges: number, tax: number) {

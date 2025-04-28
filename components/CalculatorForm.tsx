@@ -307,7 +307,7 @@ export default function CalculatorForm() {
           </CardContent>
         </Card>
 
-        {/* Carte pour le statut */}
+        {/* Carte pour le statut et prime exceptionnelle*/}
         <Card
           className="rounded-3xl shadow-md border-none overflow-hidden relative"
           style={{
@@ -317,7 +317,7 @@ export default function CalculatorForm() {
         >
           <CardHeader className="pb-2">
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Statut Professionnel
+              Statut et Prime Exceptionnelle
             </CardTitle>
             <CardDescription className="text-[var(--muted-foreground)]">
               Sélectionnez votre statut
@@ -420,6 +420,39 @@ export default function CalculatorForm() {
               </div>
             </RadioGroup>
           </CardContent>
+          <CardHeader>
+            <CardDescription className="text-[var(--muted-foreground)]">
+              <div className="pt-4 border-t mt-4">
+                Ajoutez des primes annuelles
+              </div>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="prime" className="text-sm">
+                Montant annuel (€)
+              </Label>
+              <Input
+                id="prime"
+                type="text"
+                inputMode="decimal"
+                className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                style={{
+                  boxShadow:
+                    "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                }}
+                value={formatNumberSmart(prime, "prime")}
+                onChange={(e) => {
+                  const value = e.target.value
+                    .replace(/[^\d.,]/g, "")
+                    .replace(/,/g, ".");
+                  setPrime(parseFloat(value) || 0);
+                }}
+                onFocus={() => setActiveField("prime")}
+                onBlur={() => setActiveField(null)}
+              />
+            </div>
+          </CardContent>
         </Card>
 
         {/* Carte pour le temps de travail et prélèvement */}
@@ -486,38 +519,10 @@ export default function CalculatorForm() {
         >
           <CardHeader className="pb-2">
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Prime Exceptionnelle
+              Résultat
             </CardTitle>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              Ajoutez des primes annuelles
-            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="prime" className="text-sm">
-                Montant annuel (€)
-              </Label>
-              <Input
-                id="prime"
-                type="text"
-                inputMode="decimal"
-                className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                }}
-                value={formatNumberSmart(prime, "prime")}
-                onChange={(e) => {
-                  const value = e.target.value
-                    .replace(/[^\d.,]/g, "")
-                    .replace(/,/g, ".");
-                  setPrime(parseFloat(value) || 0);
-                }}
-                onFocus={() => setActiveField("prime")}
-                onBlur={() => setActiveField(null)}
-              />
-            </div>
-
+          <CardContent>
             <div className="pt-4 border-t mt-4">
               <h3 className="font-semibold mb-4">Estimation après impôts</h3>
               <div className="grid grid-cols-2 gap-4">
