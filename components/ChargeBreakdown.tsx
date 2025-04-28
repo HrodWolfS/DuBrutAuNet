@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { type Input as SalaryInput } from "@/lib/convert";
 
 const CHARGES_LABELS = {
-  CDI: {
-    title: "Charges salariales (CDI)",
+  NON_CADRE: {
+    title: "Charges salariales (Non-cadre)",
     items: [
       { label: "Assurance maladie", rate: 0.07 },
       { label: "Assurance vieillesse", rate: 0.075 },
@@ -14,8 +14,8 @@ const CHARGES_LABELS = {
       { label: "CSG/CRDS", rate: 0.098 },
     ],
   },
-  CDD: {
-    title: "Charges salariales (CDD)",
+  CADRE: {
+    title: "Charges salariales (Cadre)",
     items: [
       { label: "Assurance maladie", rate: 0.07 },
       { label: "Assurance vieillesse", rate: 0.075 },
@@ -31,16 +31,23 @@ const CHARGES_LABELS = {
       { label: "CSG/CRDS", rate: 0.098 },
     ],
   },
-  ALTERNANCE: {
-    title: "Charges salariales (Alternance)",
+  PORTAGE_SALARIAL: {
+    title: "Charges salariales (Portage)",
     items: [
       { label: "Assurance maladie", rate: 0.07 },
+      { label: "Assurance vieillesse", rate: 0.075 },
+      { label: "Assurance chômage", rate: 0.024 },
+      { label: "Retraite complémentaire", rate: 0.04 },
       { label: "CSG/CRDS", rate: 0.098 },
     ],
   },
   AUTO_ENTREPRENEUR: {
     title: "Charges (Auto-Entrepreneur)",
-    items: [{ label: "Cotisations sociales", rate: 0.22 }],
+    items: [{ label: "Cotisations sociales", rate: 0.212 }],
+  },
+  PROFESSION_LIBERALE: {
+    title: "Charges (Profession Libérale)",
+    items: [{ label: "Cotisations sociales", rate: 0.246 }],
   },
 } as const;
 
@@ -49,18 +56,6 @@ interface Props {
   brutAmount?: number;
   taxRate: number;
   annualNetWithPrime?: number | "";
-}
-
-function formatAmount(amount: number): string {
-  return amount.toLocaleString("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-  });
-}
-
-function formatPercentage(amount: number, total: number): string {
-  return ((amount / total) * 100).toFixed(1) + "%";
 }
 
 export function ChargeBreakdown({

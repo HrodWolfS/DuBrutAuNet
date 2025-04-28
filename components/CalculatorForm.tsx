@@ -101,7 +101,7 @@ export default function CalculatorForm() {
   // Synchroniser workPercent avec UI
   useEffect(() => {
     form.setValue("hoursPerWeek", Math.round((35 * workPercent) / 100));
-  }, [hoursPerWeek, form]);
+  }, [workPercent, form]);
 
   return (
     <div className="w-full mx-auto" style={{ perspective: "1000px" }}>
