@@ -7,38 +7,39 @@ const CHARGES_LABELS = {
   NON_CADRE: {
     title: "Charges salariales (Non-cadre)",
     items: [
-      { label: "Assurance maladie", rate: 0.07 },
-      { label: "Assurance vieillesse", rate: 0.075 },
-      { label: "Assurance chômage", rate: 0.024 },
-      { label: "Retraite complémentaire", rate: 0.04 },
-      { label: "CSG/CRDS", rate: 0.098 },
+      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
+      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
+      { label: "Retraite complémentaire tranche 1", rate: 0.0315 },
+      { label: "CEG tranche 1", rate: 0.0086 },
+      { label: "CSG/CRDS", rate: 0.097 },
     ],
   },
   CADRE: {
     title: "Charges salariales (Cadre)",
     items: [
-      { label: "Assurance maladie", rate: 0.07 },
-      { label: "Assurance vieillesse", rate: 0.075 },
-      { label: "Assurance chômage", rate: 0.024 },
-      { label: "Retraite complémentaire", rate: 0.04 },
-      { label: "CSG/CRDS", rate: 0.098 },
+      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
+      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
+      { label: "Retraite complémentaire tranche 1", rate: 0.0315 },
+      { label: "CEG tranche 1", rate: 0.0086 },
+      { label: "Cotisation APEC", rate: 0.00024 },
+      { label: "CSG/CRDS", rate: 0.097 },
     ],
   },
   FONCTION_PUBLIQUE: {
     title: "Charges salariales (Fonction Publique)",
     items: [
       { label: "Pension civile", rate: 0.11 },
-      { label: "CSG/CRDS", rate: 0.098 },
+      { label: "CSG/CRDS", rate: 0.097 },
     ],
   },
   PORTAGE_SALARIAL: {
     title: "Charges salariales (Portage)",
     items: [
-      { label: "Assurance maladie", rate: 0.07 },
-      { label: "Assurance vieillesse", rate: 0.075 },
-      { label: "Assurance chômage", rate: 0.024 },
-      { label: "Retraite complémentaire", rate: 0.04 },
-      { label: "CSG/CRDS", rate: 0.098 },
+      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
+      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
+      { label: "Retraite complémentaire tranche 1", rate: 0.0315 },
+      { label: "CEG tranche 1", rate: 0.0086 },
+      { label: "CSG/CRDS", rate: 0.097 },
     ],
   },
   AUTO_ENTREPRENEUR: {
@@ -47,7 +48,11 @@ const CHARGES_LABELS = {
   },
   PROFESSION_LIBERALE: {
     title: "Charges (Profession Libérale)",
-    items: [{ label: "Cotisations sociales", rate: 0.246 }],
+    items: [
+      { label: "Retraite de base", rate: 0.1787 },
+      { label: "Retraite complémentaire", rate: 0.081 },
+      { label: "CSG/CRDS", rate: 0.097 },
+    ],
   },
 } as const;
 

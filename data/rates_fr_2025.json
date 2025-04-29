@@ -1,15 +1,24 @@
 {
-  "lastUpdate": "2024-04-01T00:00:00.000Z",
+  "lastUpdate": "2025-04-29T00:00:00.000Z",
   "smic": {
-    "hourly": 11.65,
-    "monthly": 1766.92
+    "hourly": 11.88,
+    "monthly": 1801.8
   },
   "rates": {
-    "NON_CADRE": { "employee": 0.22 },
-    "CADRE": { "employee": 0.22 },
-    "FONCTION_PUBLIQUE": { "employee": 0.15 },
-    "PORTAGE_SALARIAL": { "employee": 0.22 },
-    "AUTO_ENTREPRENEUR": { "employee": 0.212 },
-    "PROFESSION_LIBERALE": { "employee": 0.246 }
+    "NON_CADRE": {
+      "employee": 0.22
+    },
+    "CADRE": {
+      "employee": 0.245
+    },
+    "PORTAGE_SALARIAL": {
+      "employee": 0.22
+    },
+    "FONCTION_PUBLIQUE": {
+      "employee": 0.167
+    },
+    "PROFESSION_LIBERALE": {
+      "employee": 0.3567
+    }
   }
 }
