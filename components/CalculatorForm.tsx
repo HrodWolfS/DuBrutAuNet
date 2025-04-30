@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ChargeBreakdown } from "./ChargeBreakdown";
 
 export default function CalculatorForm() {
   const [
@@ -105,120 +106,271 @@ export default function CalculatorForm() {
 
   return (
     <div className="w-full mx-auto" style={{ perspective: "1000px" }}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Carte pour les salaires brut et net */}
-        <Card
-          className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-6 overflow-hidden relative"
-          style={{
-            boxShadow:
-              "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Salaires Brut et Net
-            </CardTitle>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              Calculez votre rémunération
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold">Salaire Brut</h3>
-                <div>
-                  <Label htmlFor="hourly-brut" className="text-sm">
-                    Horaire brut
-                  </Label>
-                  <Input
-                    id="hourly-brut"
-                    type="text"
-                    inputMode="decimal"
-                    className="
-                    text-right
-                    bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
-                    rounded-2xl
-                    px-6 py-3
-                    text-lg font-medium
-                    placeholder:text-[var(--muted-foreground)]
-                    shadow-inner
-                    shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
-                    focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
-                  "
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(values.brut.hourly, "hourly-brut")}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "hourly", "brut")
-                    }
-                    onFocus={() => setActiveField("hourly-brut")}
-                    onBlur={() => setActiveField(null)}
-                  />
-                </div>
-                <div>
-                  <div className="flex justify-between items-center">
-                    <Label htmlFor="monthly-brut" className="text-sm">
-                      Mensuel brut
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+        {/* Colonne gauche */}
+        <div className="flex flex-col gap-6">
+          {/* Carte Salaires Brut et Net */}
+          <Card
+            className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-6 overflow-hidden relative"
+            style={{
+              boxShadow:
+                "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+                Salaires Brut et Net
+              </CardTitle>
+              <CardDescription className="text-[var(--muted-foreground)]">
+                Calculez votre rémunération
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Salaire Brut</h3>
+                  <div>
+                    <Label htmlFor="hourly-brut" className="text-sm">
+                      Horaire brut
                     </Label>
-                    {status === "NON_CADRE" && (
-                      <span className="text-xs bg-[var(--accent)] text-[var(--accent-foreground)] px-3 py-1 rounded-xl font-medium">
-                        Non-cadre -22%
-                      </span>
-                    )}
+                    <Input
+                      id="hourly-brut"
+                      type="text"
+                      inputMode="decimal"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-6 py-3
+                      text-lg font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      shadow-inner
+                      shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
+                    "
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(
+                        values.brut.hourly,
+                        "hourly-brut"
+                      )}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "hourly", "brut")
+                      }
+                      onFocus={() => setActiveField("hourly-brut")}
+                      onBlur={() => setActiveField(null)}
+                    />
                   </div>
-                  <Input
-                    id="monthly-brut"
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(
-                      values.brut.monthly,
-                      "monthly-brut"
-                    )}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "monthly", "brut")
-                    }
-                    onFocus={() => setActiveField("monthly-brut")}
-                    onBlur={() => setActiveField(null)}
-                  />
+                  <div>
+                    <div className="relative flex items-center gap-2">
+                      <Label htmlFor="monthly-brut" className="text-sm">
+                        Mensuel brut
+                      </Label>
+                      {status && (
+                        <span className="absolute top-4 right-0 translate-y-[-100%] bg-[var(--accent)] text-[var(--accent-foreground)] px-3 py-1 rounded-xl font-medium text-xs">
+                          {(() => {
+                            switch (status) {
+                              case "NON_CADRE":
+                                return "Cotisations – 22%";
+                              case "CADRE":
+                                return "Cotisations – 22%";
+                              case "FONCTION_PUBLIQUE":
+                                return "Cotisations – 15%";
+                              case "PORTAGE_SALARIAL":
+                                return "Cotisations – 22%";
+                              case "AUTO_ENTREPRENEUR":
+                                return "Cotisations – 22%";
+                              case "PROFESSION_LIBERALE":
+                                return "Cotisations – 24.6%";
+                              default:
+                                return "";
+                            }
+                          })()}
+                        </span>
+                      )}
+                    </div>
+                    <Input
+                      id="monthly-brut"
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(
+                        values.brut.monthly,
+                        "monthly-brut"
+                      )}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "monthly", "brut")
+                      }
+                      onFocus={() => setActiveField("monthly-brut")}
+                      onBlur={() => setActiveField(null)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="yearly-brut" className="text-sm">
+                      Annuel brut
+                    </Label>
+                    <Input
+                      id="yearly-brut"
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(
+                        values.brut.yearly,
+                        "yearly-brut"
+                      )}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "yearly", "brut")
+                      }
+                      onFocus={() => setActiveField("yearly-brut")}
+                      onBlur={() => setActiveField(null)}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="yearly-brut" className="text-sm">
-                    Annuel brut
-                  </Label>
-                  <Input
-                    id="yearly-brut"
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(values.brut.yearly, "yearly-brut")}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "yearly", "brut")
-                    }
-                    onFocus={() => setActiveField("yearly-brut")}
-                    onBlur={() => setActiveField(null)}
-                  />
+
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Salaire Net</h3>
+                  <div>
+                    <Label htmlFor="hourly-net" className="text-sm">
+                      Horaire net
+                    </Label>
+                    <Input
+                      id="hourly-net"
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(values.net.hourly, "hourly-net")}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "hourly", "net")
+                      }
+                      onFocus={() => setActiveField("hourly-net")}
+                      onBlur={() => setActiveField(null)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="monthly-net" className="text-sm">
+                      Mensuel net
+                    </Label>
+                    <Input
+                      id="monthly-net"
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(
+                        values.net.monthly,
+                        "monthly-net"
+                      )}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "monthly", "net")
+                      }
+                      onFocus={() => setActiveField("monthly-net")}
+                      onBlur={() => setActiveField(null)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="yearly-net" className="text-sm">
+                      Annuel net
+                    </Label>
+                    <Input
+                      id="yearly-net"
+                      type="text"
+                      inputMode="decimal"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                      }}
+                      value={formatNumberSmart(values.net.yearly, "yearly-net")}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, "yearly", "net")
+                      }
+                      onFocus={() => setActiveField("yearly-net")}
+                      onBlur={() => setActiveField(null)}
+                    />
+                  </div>
                 </div>
               </div>
-
+            </CardContent>
+          </Card>
+          {/* gap-6 entre toutes les Cards */}
+          {/* Carte Paramètres (Statut + Prime annuelle) */}
+          <Card
+            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            style={{
+              boxShadow:
+                "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+                Paramètres
+              </CardTitle>
+              <CardDescription className="text-[var(--muted-foreground)]">
+                Ajustez vos informations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {/* Section Statut et Prime */}
               <div className="space-y-4">
-                <h3 className="font-semibold">Salaire Net</h3>
+                <h3 className="font-semibold">Statut</h3>
+                <RadioGroup
+                  defaultValue="NON_CADRE"
+                  className="grid grid-cols-3 gap-4"
+                  onValueChange={(e) => setStatus(e as StatusType)}
+                >
+                  {[
+                    "NON_CADRE",
+                    "CADRE",
+                    "FONCTION_PUBLIQUE",
+                    "PROFESSION_LIBERALE",
+                    "AUTO_ENTREPRENEUR",
+                    "PORTAGE_SALARIAL",
+                  ].map((statusValue) => (
+                    <div
+                      key={statusValue}
+                      className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
+                      style={{
+                        boxShadow:
+                          "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
+                      }}
+                    >
+                      <RadioGroupItem
+                        value={statusValue}
+                        id={statusValue}
+                        className="text-primary"
+                      />
+                      <Label
+                        htmlFor={statusValue}
+                        className="text-sm font-medium capitalize"
+                      >
+                        {statusValue.replace("_", " ").toLowerCase()}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
                 <div>
-                  <Label htmlFor="hourly-net" className="text-sm">
-                    Horaire net
+                  <Label htmlFor="prime" className="text-sm">
+                    Prime annuelle (€)
                   </Label>
                   <Input
-                    id="hourly-net"
+                    id="prime"
                     type="text"
                     inputMode="decimal"
                     className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
@@ -226,367 +378,114 @@ export default function CalculatorForm() {
                       boxShadow:
                         "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
                     }}
-                    value={formatNumberSmart(values.net.hourly, "hourly-net")}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "hourly", "net")
-                    }
-                    onFocus={() => setActiveField("hourly-net")}
-                    onBlur={() => setActiveField(null)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="monthly-net" className="text-sm">
-                    Mensuel net
-                  </Label>
-                  <Input
-                    id="monthly-net"
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
+                    value={formatNumberSmart(prime, "prime")}
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .replace(/[^\d.,]/g, "")
+                        .replace(/,/g, ".");
+                      setPrime(parseFloat(value) || 0);
                     }}
-                    value={formatNumberSmart(values.net.monthly, "monthly-net")}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "monthly", "net")
-                    }
-                    onFocus={() => setActiveField("monthly-net")}
-                    onBlur={() => setActiveField(null)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="yearly-net" className="text-sm">
-                    Annuel net
-                  </Label>
-                  <Input
-                    id="yearly-net"
-                    type="text"
-                    inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(values.net.yearly, "yearly-net")}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, "yearly", "net")
-                    }
-                    onFocus={() => setActiveField("yearly-net")}
+                    onFocus={() => setActiveField("prime")}
                     onBlur={() => setActiveField(null)}
                   />
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Carte pour le statut et prime exceptionnelle*/}
-        <Card
-          className="rounded-3xl shadow-md border-none overflow-hidden relative"
-          style={{
-            boxShadow:
-              "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Statut et Prime Exceptionnelle
-            </CardTitle>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              Sélectionnez votre statut
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              defaultValue="NON_CADRE"
-              className="grid grid-cols-3 gap-4 mt-2"
-              onValueChange={(e) => setStatus(e as StatusType)}
-            >
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="NON_CADRE"
-                  id="NON_CADRE"
-                  className="text-primary"
-                />
-                <Label htmlFor="NON_CADRE" className="text-sm font-medium">
-                  Salarié non-cadre
-                </Label>
-              </div>
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="CADRE"
-                  id="CADRE"
-                  className="text-primary"
-                />
-                <Label htmlFor="CADRE" className="text-sm font-medium">
-                  Salarié cadre
-                </Label>
-              </div>
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="FONCTION_PUBLIQUE"
-                  id="FONCTION_PUBLIQUE"
-                  className="text-primary"
-                />
-                <Label
-                  htmlFor="FONCTION_PUBLIQUE"
-                  className="text-sm font-medium"
-                >
-                  Fonction publique
-                </Label>
-              </div>
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="PROFESSION_LIBERALE"
-                  id="PROFESSION_LIBERALE"
-                  className="text-primary"
-                />
-                <Label
-                  htmlFor="PROFESSION_LIBERALE"
-                  className="text-sm font-medium"
-                >
-                  Profession libérale
-                </Label>
-              </div>
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="AUTO_ENTREPRENEUR"
-                  id="AUTO_ENTREPRENEUR"
-                  className="text-primary"
-                />
-                <Label
-                  htmlFor="AUTO_ENTREPRENEUR"
-                  className="text-sm font-medium"
-                >
-                  Auto-entrepreneur
-                </Label>
-              </div>
-              <div
-                className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
-                }}
-              >
-                <RadioGroupItem
-                  value="PORTAGE_SALARIAL"
-                  id="PORTAGE_SALARIAL"
-                  className="text-primary"
-                />
-                <Label
-                  htmlFor="PORTAGE_SALARIAL"
-                  className="text-sm font-medium"
-                >
-                  Portage salarial
-                </Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-          <CardHeader>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              <div className="pt-4 border-t mt-4">
-                Ajoutez des primes annuelles
-              </div>
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="prime" className="text-sm">
-                Montant annuel (€)
-              </Label>
-              <Input
-                id="prime"
-                type="text"
-                inputMode="decimal"
-                className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
-                style={{
-                  boxShadow:
-                    "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                }}
-                value={formatNumberSmart(prime, "prime")}
-                onChange={(e) => {
-                  const value = e.target.value
-                    .replace(/[^\d.,]/g, "")
-                    .replace(/,/g, ".");
-                  setPrime(parseFloat(value) || 0);
-                }}
-                onFocus={() => setActiveField("prime")}
-                onBlur={() => setActiveField(null)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Carte pour le temps de travail et prélèvement */}
-        <Card
-          className="rounded-3xl shadow-md border-none overflow-hidden relative"
-          style={{
-            boxShadow:
-              "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Temps de Travail et Impôts
-            </CardTitle>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              Ajustez vos paramètres
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <Label>Temps de travail</Label>
-                <span className="font-medium">
-                  {Math.round((hoursPerWeek / 35) * 100)}%
-                </span>
-              </div>
-
-              <Slider
-                min={0}
-                max={48}
-                step={1}
-                defaultValue={[35]}
-                value={[hoursPerWeek]}
-                onValueChange={(values) => {
-                  const h = values[0];
-                  // met à jour le formulaire et l'état global
-                  form.setValue("hoursPerWeek", h);
-                  setWorkPercent((h / 35) * 100);
-                }}
-                className="mt-2"
-                style={{ height: "8px" }}
-              />
-
-              <div className="text-xs text-muted-foreground text-right">
-                {hoursPerWeek} heures/semaine
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <Label>Taux prélèvement à la source</Label>
-                <span className="font-medium">{taxRate.toFixed(1)}%</span>
-              </div>
-              <Slider
-                defaultValue={[0]}
-                max={50}
-                step={0.5}
-                value={[taxRate]}
-                onValueChange={(values) => setTaxRate(values[0])}
-                className="mt-2"
-                style={{ height: "8px" }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Carte pour la prime exceptionnelle */}
-        <Card
-          className="rounded-3xl shadow-md border-none overflow-hidden relative"
-          style={{
-            boxShadow:
-              "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
-              Résultat
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="pt-4 border-t mt-4">
-              <h3 className="font-semibold mb-4">Estimation après impôts</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="monthly-after-tax" className="text-sm">
-                    Mensuel après impôts
-                  </Label>
-                  <Input
-                    id="monthly-after-tax"
-                    type="text"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)]"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(
-                      monthlyNetAfterTax,
-                      "monthly-after-tax"
-                    )}
-                    readOnly
-                  />
+            </CardContent>
+          </Card>
+          {/* gap-6 entre toutes les Cards */}
+        </div>
+        {/* Colonne droite */}
+        <div className="flex flex-col gap-6">
+          {/* Carte Temps de travail et impôts */}
+          <Card
+            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            style={{
+              boxShadow:
+                "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+                Temps de travail et impôts
+              </CardTitle>
+              <CardDescription className="text-[var(--muted-foreground)]">
+                Ajustez vos paramètres
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {/* Section Temps de travail */}
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label>Temps de travail</Label>
+                  <span className="font-medium">
+                    {Math.round((hoursPerWeek / 35) * 100)}%
+                  </span>
                 </div>
-                <div>
-                  <Label htmlFor="yearly-after-tax" className="text-sm">
-                    Annuel après impôts
-                  </Label>
-                  <Input
-                    id="yearly-after-tax"
-                    type="text"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)]"
-                    style={{
-                      boxShadow:
-                        "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
-                    }}
-                    value={formatNumberSmart(
-                      annualNetWithPrime,
-                      "yearly-after-tax"
-                    )}
-                    readOnly
-                  />
+                <Slider
+                  min={0}
+                  max={48}
+                  step={1}
+                  defaultValue={[35]}
+                  value={[hoursPerWeek]}
+                  onValueChange={(values) => {
+                    const h = values[0];
+                    form.setValue("hoursPerWeek", h);
+                    setWorkPercent((h / 35) * 100);
+                  }}
+                  className="mt-2"
+                  style={{ height: "8px" }}
+                />
+                <div className="text-xs text-muted-foreground text-right">
+                  {hoursPerWeek} heures/semaine
                 </div>
               </div>
-            </div>
-            <div className="pt-4 border-t mt-4">
-              <span className="text-lg font-medium">
-                Cotisations sociales :{" "}
-                {Math.round(
-                  ({
-                    NON_CADRE: 0.22,
-                    CADRE: 0.22,
-                    FONCTION_PUBLIQUE: 0.15,
-                    AUTO_ENTREPRENEUR: 0.22,
-                    PORTAGE_SALARIAL: 0.22,
-                    PROFESSION_LIBERALE: 0.246,
-                  }[status] || 0) * 100
-                )}{" "}
-                %
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+
+              {/* Section Impôt */}
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label>Taux prélèvement à la source</Label>
+                  <span className="font-medium">{taxRate.toFixed(1)}%</span>
+                </div>
+                <Slider
+                  defaultValue={[0]}
+                  max={50}
+                  step={0.5}
+                  value={[taxRate]}
+                  onValueChange={(values) => setTaxRate(values[0])}
+                  className="mt-2"
+                  style={{ height: "8px" }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          {/* Carte Résultat */}
+          <Card
+            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            style={{
+              boxShadow:
+                "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <CardHeader className="">
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+                Résultat
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Intégration de ChargeBreakdown */}
+              {values.rawBrut.monthly > 0 && (
+                <div className="">
+                  <ChargeBreakdown
+                    status={status}
+                    brutAmount={values.rawBrut.monthly}
+                    taxRate={taxRate}
+                    annualNetWithPrime={annualNetWithPrime}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <div className="flex justify-center mt-8">
