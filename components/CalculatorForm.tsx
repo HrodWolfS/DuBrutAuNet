@@ -1,13 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { StatusType, useCalculator } from "@/lib/hooks/useCalculator";
 import { formSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,7 +29,6 @@ export default function CalculatorForm() {
       hoursPerWeek,
       prime,
       annualNetWithPrime,
-      monthlyNetAfterTax,
     },
     { handleValueChange, setStatus, setTaxRate, setWorkPercent, setPrime },
   ] = useCalculator();
@@ -58,22 +56,6 @@ export default function CalculatorForm() {
     if (cleanValue) {
       handleValueChange(cleanValue, field, type);
     }
-  };
-
-  // Réinitialiser tous les champs
-  const resetForm = () => {
-    form.reset({
-      amount: 11.65,
-      unit: "hourly",
-      direction: "brut",
-      status: "NON_CADRE",
-      hoursPerWeek: 35,
-    });
-    handleValueChange("0", "hourly", "brut");
-    setStatus("NON_CADRE");
-    setWorkPercent(100);
-    setTaxRate(0);
-    setPrime(0);
   };
 
   // Remplace formatNumber par une version qui gère le fixed(0) pour mensuel/annuel
@@ -105,32 +87,34 @@ export default function CalculatorForm() {
   }, [workPercent, form]);
 
   return (
-    <div className="w-full mx-auto" style={{ perspective: "1000px" }}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+    <div
+      className="w-full mx-auto px-2 sm:px-4"
+      style={{ perspective: "1000px" }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto">
         {/* Colonne gauche */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Carte Salaires Brut et Net */}
           <Card
-            className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-6 overflow-hidden relative"
+            className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-2 sm:p-4 overflow-hidden relative pb-4"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Salaires Brut et Net
               </CardTitle>
-              <CardDescription className="text-[var(--muted-foreground)]">
-                Calculez votre rémunération
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Salaire Brut</h3>
-                  <div>
-                    <Label htmlFor="hourly-brut" className="text-sm">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="space-y-2 sm:space-y-4">
+                  <h3 className="font-semibold text-sm sm:text-base">
+                    Salaire Brut
+                  </h3>
+                  <div className="h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="hourly-brut" className="text-xs mb-1">
                       Horaire brut
                     </Label>
                     <Input
@@ -141,8 +125,8 @@ export default function CalculatorForm() {
                       text-right
                       bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
                       rounded-2xl
-                      px-6 py-3
-                      text-lg font-medium
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
                       placeholder:text-[var(--muted-foreground)]
                       shadow-inner
                       shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
@@ -163,39 +147,38 @@ export default function CalculatorForm() {
                       onBlur={() => setActiveField(null)}
                     />
                   </div>
-                  <div>
-                    <div className="relative flex items-center gap-2">
-                      <Label htmlFor="monthly-brut" className="text-sm">
-                        Mensuel brut
-                      </Label>
-                      {status && (
-                        <span className="absolute top-4 right-0 translate-y-[-100%] bg-[var(--accent)] text-[var(--accent-foreground)] px-3 py-1 rounded-xl font-medium text-xs">
-                          {(() => {
-                            switch (status) {
-                              case "NON_CADRE":
-                                return "Cotisations – 22%";
-                              case "CADRE":
-                                return "Cotisations – 22%";
-                              case "FONCTION_PUBLIQUE":
-                                return "Cotisations – 15%";
-                              case "PORTAGE_SALARIAL":
-                                return "Cotisations – 22%";
-                              case "AUTO_ENTREPRENEUR":
-                                return "Cotisations – 22%";
-                              case "PROFESSION_LIBERALE":
-                                return "Cotisations – 24.6%";
-                              default:
-                                return "";
-                            }
-                          })()}
-                        </span>
-                      )}
-                    </div>
+                  <div className="relative h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="monthly-brut" className="text-xs mb-1">
+                      Mensuel brut
+                    </Label>
+                    {status && (
+                      <span className="absolute top-0 right-0 bg-[var(--accent)] text-[var(--accent-foreground)] px-2 sm:px-3 py-1 rounded-xl font-medium text-xs">
+                        <span className="hidden md:inline">Cotisations – </span>
+                        {(() => {
+                          switch (status) {
+                            case "NON_CADRE":
+                              return "22%";
+                            case "CADRE":
+                              return "22%";
+                            case "FONCTION_PUBLIQUE":
+                              return "15%";
+                            case "PORTAGE_SALARIAL":
+                              return "22%";
+                            case "AUTO_ENTREPRENEUR":
+                              return "22%";
+                            case "PROFESSION_LIBERALE":
+                              return "24.6%";
+                            default:
+                              return "";
+                          }
+                        })()}
+                      </span>
+                    )}
                     <Input
                       id="monthly-brut"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -211,15 +194,15 @@ export default function CalculatorForm() {
                       onBlur={() => setActiveField(null)}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="yearly-brut" className="text-sm">
+                  <div className="h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="yearly-brut" className="text-xs mb-1">
                       Annuel brut
                     </Label>
                     <Input
                       id="yearly-brut"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -237,17 +220,19 @@ export default function CalculatorForm() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Salaire Net</h3>
-                  <div>
-                    <Label htmlFor="hourly-net" className="text-sm">
+                <div className="space-y-2 sm:space-y-4">
+                  <h3 className="font-semibold text-sm sm:text-base">
+                    Salaire Net
+                  </h3>
+                  <div className="h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="hourly-net" className="text-xs mb-1">
                       Horaire net
                     </Label>
                     <Input
                       id="hourly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -260,15 +245,15 @@ export default function CalculatorForm() {
                       onBlur={() => setActiveField(null)}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="monthly-net" className="text-sm">
+                  <div className="h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="monthly-net" className="text-xs mb-1">
                       Mensuel net
                     </Label>
                     <Input
                       id="monthly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -284,15 +269,15 @@ export default function CalculatorForm() {
                       onBlur={() => setActiveField(null)}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="yearly-net" className="text-sm">
+                  <div className="h-[72px] sm:h-auto flex flex-col justify-end">
+                    <Label htmlFor="yearly-net" className="text-xs mb-1">
                       Annuel net
                     </Label>
                     <Input
                       id="yearly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -312,27 +297,24 @@ export default function CalculatorForm() {
           {/* gap-6 entre toutes les Cards */}
           {/* Carte Paramètres (Statut + Prime annuelle) */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Paramètres
               </CardTitle>
-              <CardDescription className="text-[var(--muted-foreground)]">
-                Ajustez vos informations
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-2 sm:space-y-4">
               {/* Section Statut et Prime */}
-              <div className="space-y-4">
-                <h3 className="font-semibold">Statut</h3>
+              <div className="space-y-2 sm:space-y-4">
+                <h3 className="font-semibold text-sm sm:text-base">Statut</h3>
                 <RadioGroup
                   defaultValue="NON_CADRE"
-                  className="grid grid-cols-3 gap-4"
+                  className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4"
                   onValueChange={(e) => setStatus(e as StatusType)}
                 >
                   {[
@@ -345,7 +327,7 @@ export default function CalculatorForm() {
                   ].map((statusValue) => (
                     <div
                       key={statusValue}
-                      className="flex items-center space-x-2 bg-[var(--muted)] p-3 rounded-2xl"
+                      className="flex items-center space-x-2 bg-[var(--muted)] p-2 md:p-3 rounded-2xl"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
@@ -358,7 +340,7 @@ export default function CalculatorForm() {
                       />
                       <Label
                         htmlFor={statusValue}
-                        className="text-sm font-medium capitalize"
+                        className="text-xs font-medium capitalize truncate"
                       >
                         {statusValue.replace("_", " ").toLowerCase()}
                       </Label>
@@ -366,14 +348,18 @@ export default function CalculatorForm() {
                   ))}
                 </RadioGroup>
                 <div>
-                  <Label htmlFor="prime" className="text-sm">
-                    Prime annuelle (€)
+                  <Label
+                    htmlFor="prime"
+                    className="font-semibold text-base mb-2 block"
+                  >
+                    Prime annuelle
+                    <span className="hidden sm:inline"> (€)</span>
                   </Label>
                   <Input
                     id="prime"
                     type="text"
                     inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-6 py-3 text-lg font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
                     style={{
                       boxShadow:
                         "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -395,28 +381,25 @@ export default function CalculatorForm() {
           {/* gap-6 entre toutes les Cards */}
         </div>
         {/* Colonne droite */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Carte Temps de travail et impôts */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="pb-1 sm:pb-2">
+              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Temps de travail et impôts
               </CardTitle>
-              <CardDescription className="text-[var(--muted-foreground)]">
-                Ajustez vos paramètres
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-2 sm:space-y-4">
               {/* Section Temps de travail */}
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label>Temps de travail</Label>
+                  <Label className="text-xs">Temps de travail</Label>
                   <span className="font-medium">
                     {Math.round((hoursPerWeek / 35) * 100)}%
                   </span>
@@ -443,7 +426,9 @@ export default function CalculatorForm() {
               {/* Section Impôt */}
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label>Taux prélèvement à la source</Label>
+                  <Label className="text-xs">
+                    Taux prélèvement à la source
+                  </Label>
                   <span className="font-medium">{taxRate.toFixed(1)}%</span>
                 </div>
                 <Slider
@@ -460,16 +445,27 @@ export default function CalculatorForm() {
           </Card>
           {/* Carte Résultat */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative"
+            className="rounded-3xl shadow-md border-none overflow-hidden relative p-1 sm:p-3 pb-4"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="flex items-center space-x-2 pb-1 sm:pb-2">
+              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Résultat
               </CardTitle>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Info className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground cursor-pointer" />
+                </HoverCardTrigger>
+                <HoverCardContent className="max-w-xs text-xs sm:text-sm">
+                  Les résultats sont des estimations rapides et indicatives :
+                  ils ne prennent pas en compte toutes les particularités
+                  (conventions collectives, exonérations, secteur
+                  d&apos;activité, etc.) et les salaires moyens sont généraux.
+                </HoverCardContent>
+              </HoverCard>
             </CardHeader>
             <CardContent>
               {/* Intégration de ChargeBreakdown */}
@@ -486,20 +482,6 @@ export default function CalculatorForm() {
             </CardContent>
           </Card>
         </div>
-      </div>
-
-      <div className="flex justify-center mt-8">
-        <Button
-          onClick={resetForm}
-          variant="outline"
-          className="px-8 py-6 rounded-2xl text-lg font-medium bg-[var(--card)] hover:bg-[var(--accent)] transition-colors border-none"
-          style={{
-            boxShadow:
-              "var(--shadow-md), inset 2px 2px 4px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          Réinitialiser les champs
-        </Button>
       </div>
     </div>
   );
