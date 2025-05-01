@@ -8,17 +8,20 @@ export function Footer() {
 
   return (
     <footer className="p-3 sm:p-4 border-t border-border mt-auto">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground space-y-2 md:space-y-0">
-        <div className="text-center md:text-left">
-          <span>
-            Taux mis à jour le : <strong>{formattedDate}</strong>
-          </span>
-          <span className="hidden md:inline"> | </span>
-          <span className="block md:inline">
-            © {currentDate.getFullYear()} Du Brut au Net
-          </span>
-        </div>
-        <span className="text-center md:text-right text-[10px] sm:text-xs">
+      <div className="relative max-w-7xl mx-auto flex items-center justify-between text-xs text-muted-foreground">
+        <span>
+          Taux mis à jour le : <strong>{formattedDate}</strong>
+        </span>
+        <span
+          className="absolute left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent font-bold text-center whitespace-nowrap"
+          style={{
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          © {currentDate.getFullYear()} Du Brut au Net
+        </span>
+        <span className="text-[10px] sm:text-xs text-right">
           Données fournies à titre indicatif et sans garantie.
         </span>
       </div>

@@ -140,175 +140,179 @@ export function ChargeBreakdown({
   const { title } = CHARGES_LABELS[status];
   if (!brutAmount || isNaN(brutAmount)) {
     return (
-      <Card className="p-2 sm:p-4 space-y-3 sm:space-y-4">
-        <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-        <div className="text-center text-muted-foreground">—</div>
-      </Card>
+      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)]">
+        <Card className="p-2 sm:p-4 space-y-3 sm:space-y-4 rounded-2xl bg-background border-0">
+          <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
+          <div className="text-center text-muted-foreground">—</div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-2 sm:p-4 space-y-3 sm:space-y-4">
-      <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs sm:text-sm">
-          <span className="truncate pr-2">Total cotisations sociales</span>
-          <div className="flex gap-2 sm:gap-4 flex-shrink-0">
-            <span className="text-muted-foreground">
-              {(GLOBAL_RATE[status] * 100).toFixed(1)}%
-            </span>
-            <span>
-              {(brutAmount * GLOBAL_RATE[status]).toLocaleString("fr-FR", {
-                style: "currency",
-                currency: "EUR",
-              })}
-            </span>
+    <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)]">
+      <Card className="p-2 sm:p-4 space-y-3 sm:space-y-4 rounded-2xl bg-background border-0">
+        <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span className="truncate pr-2">Total cotisations sociales</span>
+            <div className="flex gap-2 sm:gap-4 flex-shrink-0">
+              <span className="text-muted-foreground">
+                {(GLOBAL_RATE[status] * 100).toFixed(1)}%
+              </span>
+              <span>
+                {(brutAmount * GLOBAL_RATE[status]).toLocaleString("fr-FR", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="flex justify-between text-xs sm:text-sm pt-2 border-t">
-          <span className="truncate pr-2">Impôt sur le revenu</span>
-          <div className="flex gap-2 sm:gap-4 flex-shrink-0">
-            <span className="text-muted-foreground">{taxRate}%</span>
-            <span>
+          <div className="flex justify-between text-xs sm:text-sm pt-2 border-t">
+            <span className="truncate pr-2">Impôt sur le revenu</span>
+            <div className="flex gap-2 sm:gap-4 flex-shrink-0">
+              <span className="text-muted-foreground">{taxRate}%</span>
+              <span>
+                {(
+                  ((brutAmount - brutAmount * GLOBAL_RATE[status]) * taxRate) /
+                  100
+                ).toLocaleString("fr-FR", {
+                  style: "currency",
+                  currency: "EUR",
+                })}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-between text-xs sm:text-sm font-semibold pt-2 border-t">
+            <span className="truncate pr-2">Net après impôt</span>
+            <span className="flex-shrink-0">
               {(
-                ((brutAmount - brutAmount * GLOBAL_RATE[status]) * taxRate) /
-                100
+                (brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                (1 - taxRate / 100)
               ).toLocaleString("fr-FR", {
                 style: "currency",
                 currency: "EUR",
               })}
             </span>
           </div>
-        </div>
 
-        <div className="flex justify-between text-xs sm:text-sm font-semibold pt-2 border-t">
-          <span className="truncate pr-2">Net après impôt</span>
-          <span className="flex-shrink-0">
-            {(
-              (brutAmount - brutAmount * GLOBAL_RATE[status]) *
-              (1 - taxRate / 100)
-            ).toLocaleString("fr-FR", {
-              style: "currency",
-              currency: "EUR",
-            })}
-          </span>
-        </div>
-
-        {/* Barre empilée Net / Brut */}
-        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all"
-            style={{
-              width: `${
+          {/* Barre empilée Net / Brut */}
+          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all"
+              style={{
+                width: `${
+                  (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                    (1 - taxRate / 100)) /
+                    brutAmount) *
+                  100
+                }%`,
+              }}
+              title={`Net : ${(
                 (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
                   (1 - taxRate / 100)) /
                   brutAmount) *
                 100
-              }%`,
-            }}
-            title={`Net : ${(
-              (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
-                (1 - taxRate / 100)) /
-                brutAmount) *
-              100
-            ).toFixed(1)} % du brut`}
-          />
+              ).toFixed(1)} % du brut`}
+            />
+          </div>
+
+          {/* Comparaison au salaire moyen */}
+          {AVERAGE_NET[status] && (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <div className="text-[10px] sm:text-xs text-right text-muted-foreground pt-1 cursor-help underline decoration-dotted line-clamp-2 sm:line-clamp-none">
+                  Votre net représente&nbsp;
+                  {(
+                    (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                      (1 - taxRate / 100)) /
+                      AVERAGE_NET[status].value) *
+                    100
+                  ).toFixed(0)}
+                  &nbsp;% du net moyen&nbsp;
+                  {CHARGES_LABELS[status].title
+                    .replace(/.*\((.+)\)/, "$1")
+                    .toLowerCase()}
+                  .
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent className="text-xs sm:text-sm text-left space-y-1">
+                <p>
+                  Le salaire moyen pour un&nbsp;
+                  {CHARGES_LABELS[status].title
+                    .replace(/.*\((.+)\)/, "$1")
+                    .toLowerCase()}{" "}
+                  est de&nbsp;
+                  {AVERAGE_NET[status].value.toLocaleString("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}{" "}
+                  net.
+                </p>
+                <p className="text-muted-foreground">
+                  Source :{" "}
+                  <a
+                    href={AVERAGE_NET[status].source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    Voir les données
+                  </a>
+                </p>
+              </HoverCardContent>
+            </HoverCard>
+          )}
         </div>
 
-        {/* Comparaison au salaire moyen */}
-        {AVERAGE_NET[status] && (
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <div className="text-[10px] sm:text-xs text-right text-muted-foreground pt-1 cursor-help underline decoration-dotted line-clamp-2 sm:line-clamp-none">
-                Votre net représente&nbsp;
-                {(
-                  (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
-                    (1 - taxRate / 100)) /
-                    AVERAGE_NET[status].value) *
-                  100
-                ).toFixed(0)}
-                &nbsp;% du net moyen&nbsp;
-                {CHARGES_LABELS[status].title
-                  .replace(/.*\((.+)\)/, "$1")
-                  .toLowerCase()}
-                .
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent className="text-xs sm:text-sm text-left space-y-1">
-              <p>
-                Le salaire moyen pour un&nbsp;
-                {CHARGES_LABELS[status].title
-                  .replace(/.*\((.+)\)/, "$1")
-                  .toLowerCase()}{" "}
-                est de&nbsp;
-                {AVERAGE_NET[status].value.toLocaleString("fr-FR", {
-                  style: "currency",
-                  currency: "EUR",
-                })}{" "}
-                net.
-              </p>
-              <p className="text-muted-foreground">
-                Source :{" "}
-                <a
-                  href={AVERAGE_NET[status].source}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  Voir les données
-                </a>
-              </p>
-            </HoverCardContent>
-          </HoverCard>
+        {/* Détail complet des charges */}
+        <details className="text-xs sm:text-sm">
+          <summary className="cursor-pointer p-2 hover:bg-muted rounded-md transition-colors">
+            Détail complet des charges
+          </summary>
+          <ul className="space-y-1 mt-2 pl-2">
+            {CHARGES_LABELS[status].items.map((item, i) => (
+              <li key={i} className="flex justify-between">
+                <span className="truncate pr-2">{item.label}</span>
+                <div className="flex gap-2 sm:gap-4 flex-shrink-0">
+                  <span className="text-muted-foreground">
+                    {(item.rate * 100).toFixed(1)}%
+                  </span>
+                  <span>
+                    {(brutAmount * item.rate).toLocaleString("fr-FR", {
+                      style: "currency",
+                      currency: "EUR",
+                    })}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </details>
+
+        {/* Projection annuelle avec prime */}
+        {annualNetWithPrime !== undefined && annualNetWithPrime !== "" && (
+          <div className="pt-2 border-t">
+            <div className="flex justify-between text-xs sm:text-sm">
+              <span className="truncate pr-2">Annuel net (avec prime)</span>
+              <span className="font-semibold flex-shrink-0">
+                {typeof annualNetWithPrime === "number"
+                  ? annualNetWithPrime.toLocaleString("fr-FR", {
+                      style: "currency",
+                      currency: "EUR",
+                    })
+                  : "—"}
+              </span>
+            </div>
+            <div className="text-[10px] sm:text-xs text-muted-foreground text-right mt-1">
+              (Net mensuel × 12) + Prime × (1 − {GLOBAL_RATE[status] * 100}%
+              cotis. − {taxRate}% impôt)
+            </div>
+          </div>
         )}
-      </div>
-
-      {/* Détail complet des charges */}
-      <details className="text-xs sm:text-sm">
-        <summary className="cursor-pointer p-2 hover:bg-muted rounded-md transition-colors">
-          Détail complet des charges
-        </summary>
-        <ul className="space-y-1 mt-2 pl-2">
-          {CHARGES_LABELS[status].items.map((item, i) => (
-            <li key={i} className="flex justify-between">
-              <span className="truncate pr-2">{item.label}</span>
-              <div className="flex gap-2 sm:gap-4 flex-shrink-0">
-                <span className="text-muted-foreground">
-                  {(item.rate * 100).toFixed(1)}%
-                </span>
-                <span>
-                  {(brutAmount * item.rate).toLocaleString("fr-FR", {
-                    style: "currency",
-                    currency: "EUR",
-                  })}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </details>
-
-      {/* Projection annuelle avec prime */}
-      {annualNetWithPrime !== undefined && annualNetWithPrime !== "" && (
-        <div className="pt-2 border-t">
-          <div className="flex justify-between text-xs sm:text-sm">
-            <span className="truncate pr-2">Annuel net (avec prime)</span>
-            <span className="font-semibold flex-shrink-0">
-              {typeof annualNetWithPrime === "number"
-                ? annualNetWithPrime.toLocaleString("fr-FR", {
-                    style: "currency",
-                    currency: "EUR",
-                  })
-                : "—"}
-            </span>
-          </div>
-          <div className="text-[10px] sm:text-xs text-muted-foreground text-right mt-1">
-            (Net mensuel × 12) + Prime × (1 − {GLOBAL_RATE[status] * 100}%
-            cotis. − {taxRate}% impôt)
-          </div>
-        </div>
-      )}
-    </Card>
+      </Card>
+    </div>
   );
 }

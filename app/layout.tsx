@@ -33,7 +33,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-screen bg-background text-foreground flex flex-col">
         <header className="sticky top-0 z-50 w-full bg-background/80 border-b border-border flex items-center justify-between px-6 py-3 backdrop-blur">
-          <Link href="/" className="text-2xl font-bold tracking-tight">
+          <Link
+            href="/"
+            className="text-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent font-bold tracking-tight"
+          >
             Du Brut au Net
           </Link>
           <div className="flex items-center space-x-4">

@@ -1,34 +1,49 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+
 export function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (typeof document !== "undefined") {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    }
+  }, []);
+
+  const handleToggle = () => {
+    if (typeof document === "undefined") return;
+    const html = document.documentElement;
+    html.classList.toggle("dark");
+    localStorage.setItem(
+      "theme",
+      html.classList.contains("dark") ? "dark" : "light"
+    );
+    setIsDark(html.classList.contains("dark"));
+  };
+
   return (
-    <button
-      type="button"
-      aria-label="Toggle dark mode"
-      className="rounded-full border p-2 hover:bg-accent transition"
-      onClick={() => {
-        const html = document.documentElement;
-        html.classList.toggle("dark");
-        localStorage.setItem(
-          "theme",
-          html.classList.contains("dark") ? "dark" : "light"
-        );
-      }}
-    >
-      <span className="inline-block w-6 h-6">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-6 h-6"
-        >
-          <circle cx="12" cy="12" r="5" />
-          <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07-1.41-1.41M6.34 6.34 4.93 4.93m12.02 0-1.41 1.41M6.34 17.66l-1.41 1.41" />
-        </svg>
-      </span>
-    </button>
+    <div className="relative group">
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] opacity-70 group-hover:opacity-100 transition-opacity"></div>
+      <button
+        type="button"
+        aria-label="Toggle dark mode"
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-background m-[1px] group-hover:bg-background/90 transition-colors"
+        onClick={handleToggle}
+      >
+        <span className="flex items-center justify-center">
+          {mounted ? (
+            isDark ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )
+          ) : null}
+        </span>
+      </button>
+    </div>
   );
 }

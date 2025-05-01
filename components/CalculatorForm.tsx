@@ -91,9 +91,9 @@ export default function CalculatorForm() {
       className="w-full mx-auto px-2 sm:px-4"
       style={{ perspective: "1000px" }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto items-stretch">
         {/* Colonne gauche */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 h-full items-stretch">
           {/* Carte Salaires Brut et Net */}
           <Card
             className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-2 sm:p-4 overflow-hidden relative pb-4"
@@ -151,29 +151,6 @@ export default function CalculatorForm() {
                     <Label htmlFor="monthly-brut" className="text-xs mb-1">
                       Mensuel brut
                     </Label>
-                    {status && (
-                      <span className="absolute top-0 right-0 bg-[var(--accent)] text-[var(--accent-foreground)] px-2 sm:px-3 py-1 rounded-xl font-medium text-xs">
-                        <span className="hidden md:inline">Cotisations – </span>
-                        {(() => {
-                          switch (status) {
-                            case "NON_CADRE":
-                              return "22%";
-                            case "CADRE":
-                              return "22%";
-                            case "FONCTION_PUBLIQUE":
-                              return "15%";
-                            case "PORTAGE_SALARIAL":
-                              return "22%";
-                            case "AUTO_ENTREPRENEUR":
-                              return "22%";
-                            case "PROFESSION_LIBERALE":
-                              return "24.6%";
-                            default:
-                              return "";
-                          }
-                        })()}
-                      </span>
-                    )}
                     <Input
                       id="monthly-brut"
                       type="text"
@@ -297,7 +274,7 @@ export default function CalculatorForm() {
           {/* gap-6 entre toutes les Cards */}
           {/* Carte Paramètres (Statut + Prime annuelle) */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
+            className="flex-1 rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
@@ -314,7 +291,7 @@ export default function CalculatorForm() {
                 <h3 className="font-semibold text-sm sm:text-base">Statut</h3>
                 <RadioGroup
                   defaultValue="NON_CADRE"
-                  className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4"
+                  className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4"
                   onValueChange={(e) => setStatus(e as StatusType)}
                 >
                   {[
@@ -340,7 +317,8 @@ export default function CalculatorForm() {
                       />
                       <Label
                         htmlFor={statusValue}
-                        className="text-xs font-medium capitalize truncate"
+                        title={statusValue.replace("_", " ").toLowerCase()}
+                        className="text-xs font-medium capitalize truncate cursor-pointer"
                       >
                         {statusValue.replace("_", " ").toLowerCase()}
                       </Label>
@@ -470,7 +448,7 @@ export default function CalculatorForm() {
             <CardContent>
               {/* Intégration de ChargeBreakdown */}
               {values.rawBrut.monthly > 0 && (
-                <div className="">
+                <div>
                   <ChargeBreakdown
                     status={status}
                     brutAmount={values.rawBrut.monthly}
