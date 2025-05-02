@@ -5,10 +5,18 @@ import Link from "next/link";
 
 export default function InfoPage() {
   return (
-    <div className="max-w-4xl mx-auto my-12 space-y-8 px-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Comment ça marche&nbsp;?</CardTitle>
+    <div className="max-w-4xl mx-auto my-12 space-y-2 px-4">
+      <Card
+        className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-3 pb-2"
+        style={{
+          boxShadow:
+            "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardHeader className="pb-1">
+          <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            Comment ça marche&nbsp;?
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p>
@@ -25,9 +33,17 @@ export default function InfoPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Sources des données</CardTitle>
+      <Card
+        className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-3 pb-2"
+        style={{
+          boxShadow:
+            "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardHeader className="pb-1">
+          <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            Sources des données
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <table className="w-full table-auto border-collapse">
@@ -109,9 +125,17 @@ export default function InfoPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Limites et disclaimer</CardTitle>
+      <Card
+        className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-3 pb-2"
+        style={{
+          boxShadow:
+            "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardHeader className="pb-1">
+          <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            Limites et disclaimer
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm italic text-muted-foreground">
@@ -125,7 +149,10 @@ export default function InfoPage() {
       </Card>
 
       <p className="mt-8 text-center">
-        <Link href="/" className="text-primary hover:underline">
+        <Link
+          href="/"
+          className="font-bold bg-gradient-to-l from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent hover:underline"
+        >
           ← Retour au simulateur
         </Link>
       </p>

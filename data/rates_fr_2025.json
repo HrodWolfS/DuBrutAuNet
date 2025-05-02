@@ -19,6 +19,9 @@
     },
     "PROFESSION_LIBERALE": {
       "employee": 0.3567
+    },
+    "AUTO_ENTREPRENEUR": {
+      "employee": 0.212
     }
   }
 }

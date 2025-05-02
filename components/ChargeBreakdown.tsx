@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -223,7 +229,7 @@ export function ChargeBreakdown({
           {AVERAGE_NET[status] && (
             <HoverCard>
               <HoverCardTrigger asChild>
-                <div className="text-[10px] sm:text-xs text-right text-muted-foreground pt-1 cursor-help underline decoration-dotted line-clamp-2 sm:line-clamp-none">
+                <div className="text-[10px] sm:text-xs text-right text-muted-foreground cursor-help underline decoration-dotted line-clamp-2 sm:line-clamp-none">
                   Votre net représente&nbsp;
                   {(
                     (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
@@ -268,33 +274,35 @@ export function ChargeBreakdown({
         </div>
 
         {/* Détail complet des charges */}
-        <details className="text-xs sm:text-sm">
-          <summary className="cursor-pointer p-2 hover:bg-muted rounded-md transition-colors">
-            Détail complet des charges
-          </summary>
-          <ul className="space-y-1 mt-2 pl-2">
-            {CHARGES_LABELS[status].items.map((item, i) => (
-              <li key={i} className="flex justify-between">
-                <span className="truncate pr-2">{item.label}</span>
-                <div className="flex gap-2 sm:gap-4 flex-shrink-0">
-                  <span className="text-muted-foreground">
-                    {(item.rate * 100).toFixed(1)}%
-                  </span>
-                  <span>
-                    {(brutAmount * item.rate).toLocaleString("fr-FR", {
-                      style: "currency",
-                      currency: "EUR",
-                    })}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </details>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="charges-detail">
+            <AccordionTrigger>Détail complet des charges</AccordionTrigger>
+            <AccordionContent className="pt-2">
+              <ul className="space-y-1 pl-2">
+                {CHARGES_LABELS[status].items.map((item, i) => (
+                  <li key={i} className="flex justify-between">
+                    <span className="truncate pr-2">{item.label}</span>
+                    <div className="flex gap-2 sm:gap-4 flex-shrink-0">
+                      <span className="text-muted-foreground">
+                        {(item.rate * 100).toFixed(1)}%
+                      </span>
+                      <span>
+                        {(brutAmount * item.rate).toLocaleString("fr-FR", {
+                          style: "currency",
+                          currency: "EUR",
+                        })}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         {/* Projection annuelle avec prime */}
         {annualNetWithPrime !== undefined && annualNetWithPrime !== "" && (
-          <div className="pt-2 border-t">
+          <div className=" border-t">
             <div className="flex justify-between text-xs sm:text-sm">
               <span className="truncate pr-2">Annuel net (avec prime)</span>
               <span className="font-semibold flex-shrink-0">

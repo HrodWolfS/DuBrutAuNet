@@ -29,8 +29,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} dark`}
     >
+      <head></head>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
         <header className="sticky top-0 z-50 w-full bg-background/80 border-b border-border flex items-center justify-between px-6 py-3 backdrop-blur">
           <Link
@@ -49,7 +50,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ThemeToggle />
           </div>
         </header>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 flex items-center justify-center">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

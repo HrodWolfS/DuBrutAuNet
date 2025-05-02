@@ -91,23 +91,23 @@ export default function CalculatorForm() {
       className="w-full mx-auto px-2 sm:px-4"
       style={{ perspective: "1000px" }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10 max-w-7xl mx-auto items-stretch">
         {/* Colonne gauche */}
-        <div className="flex flex-col gap-4 h-full items-stretch">
+        <div className="flex flex-col gap-4 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10 h-full items-stretch">
           {/* Carte Salaires Brut et Net */}
           <Card
-            className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-2 sm:p-4 overflow-hidden relative pb-4"
+            className="bg-[var(--card)] text-[var(--card-foreground)] rounded-3xl shadow-md border-none p-2 sm:p-3 overflow-hidden relative pb-2"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-1 sm:pb-2">
-              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Salaires Brut et Net
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-2">
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-2 sm:space-y-4">
                   <h3 className="font-semibold text-sm sm:text-base">
@@ -155,7 +155,17 @@ export default function CalculatorForm() {
                       id="monthly-brut"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      shadow-inner
+                      shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
+                    "
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -179,7 +189,17 @@ export default function CalculatorForm() {
                       id="yearly-brut"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      shadow-inner
+                      shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
+                    "
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -209,7 +229,14 @@ export default function CalculatorForm() {
                       id="hourly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -230,7 +257,17 @@ export default function CalculatorForm() {
                       id="monthly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      shadow-inner
+                      shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
+                    "
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -254,7 +291,17 @@ export default function CalculatorForm() {
                       id="yearly-net"
                       type="text"
                       inputMode="decimal"
-                      className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                      className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      shadow-inner
+                      shadow-[inset_2px_2px_5px_rgba(0,0,0,0.18),inset_-2px_-2px_5px_rgba(255,255,255,0.08)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0
+                    "
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -274,18 +321,18 @@ export default function CalculatorForm() {
           {/* gap-6 entre toutes les Cards */}
           {/* Carte Paramètres (Statut + Prime annuelle) */}
           <Card
-            className="flex-1 rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
+            className="flex-1 rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-3 pb-2"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-1 sm:pb-2">
-              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="">
+              <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Paramètres
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 sm:space-y-4">
+            <CardContent className="space-y-2">
               {/* Section Statut et Prime */}
               <div className="space-y-2 sm:space-y-4">
                 <h3 className="font-semibold text-sm sm:text-base">Statut</h3>
@@ -304,7 +351,7 @@ export default function CalculatorForm() {
                   ].map((statusValue) => (
                     <div
                       key={statusValue}
-                      className="flex items-center space-x-2 bg-[var(--muted)] p-2 md:p-3 rounded-2xl"
+                      className="flex items-center space-x-2 bg-gradient-to-br from-[var(--muted)] to-[var(--card)] p-2 md:p-3 rounded-2xl"
                       style={{
                         boxShadow:
                           "inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.05)",
@@ -337,7 +384,14 @@ export default function CalculatorForm() {
                     id="prime"
                     type="text"
                     inputMode="decimal"
-                    className="text-right bg-[var(--muted)] border-none rounded-2xl px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] ring-offset-0"
+                    className="
+                      text-right
+                      bg-gradient-to-br from-[var(--muted)] to-[var(--card)]
+                      rounded-2xl
+                      px-3 sm:px-6 py-2 sm:py-3
+                      text-sm sm:text-base font-medium
+                      placeholder:text-[var(--muted-foreground)]
+                      focus-visible:ring-2 focus-visible:ring-[var(--primary)] ring-offset-0"
                     style={{
                       boxShadow:
                         "inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.1)",
@@ -359,21 +413,21 @@ export default function CalculatorForm() {
           {/* gap-6 entre toutes les Cards */}
         </div>
         {/* Colonne droite */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
           {/* Carte Temps de travail et impôts */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-4 pb-4"
+            className="rounded-3xl shadow-md border-none overflow-hidden relative p-2 sm:p-3 pb-2"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="pb-1 sm:pb-2">
-              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Temps de travail et impôts
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 sm:space-y-4">
+            <CardContent className="space-y-2">
               {/* Section Temps de travail */}
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -423,14 +477,14 @@ export default function CalculatorForm() {
           </Card>
           {/* Carte Résultat */}
           <Card
-            className="rounded-3xl shadow-md border-none overflow-hidden relative p-1 sm:p-3 pb-4"
+            className="rounded-3xl shadow-md border-none overflow-hidden relative p-1 sm:p-2 pb-2"
             style={{
               boxShadow:
                 "var(--shadow-lg), inset 2px 2px 10px 2px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <CardHeader className="flex items-center space-x-2 pb-1 sm:pb-2">
-              <CardTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
+            <CardHeader className="flex items-center space-x-2 pb-1">
+              <CardTitle className="text-lg font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent">
                 Résultat
               </CardTitle>
               <HoverCard>
