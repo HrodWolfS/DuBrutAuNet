@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ChargeBreakdown } from "./ChargeBreakdown";
+import PdfExporter from "./PdfExporter";
 
 export default function CalculatorForm() {
   const [
@@ -85,6 +86,35 @@ export default function CalculatorForm() {
   useEffect(() => {
     form.setValue("hoursPerWeek", Math.round((35 * workPercent) / 100));
   }, [workPercent, form]);
+
+  // Fonction pour extraire les données du résultat pour le PDF
+  const getResultData = () => {
+    // TODO: Adapter selon ta logique/calculs réels
+    return {
+      status,
+      cotisations: {
+        percent: (22).toString(), // exemple
+        amount: values.brut.monthly.toLocaleString("fr-FR", {
+          minimumFractionDigits: 2,
+        }),
+      },
+      impot: {
+        percent: taxRate.toString(),
+        amount: (Number(values.brut.monthly) * (taxRate / 100)).toLocaleString(
+          "fr-FR",
+          { minimumFractionDigits: 2 }
+        ),
+      },
+      netApresImpot: values.net.monthly.toLocaleString("fr-FR", {
+        minimumFractionDigits: 2,
+      }),
+      netComparaison: "61", // exemple
+      annuelNet: values.net.yearly.toLocaleString("fr-FR", {
+        minimumFractionDigits: 2,
+      }),
+      formule: "(Net mensuel × 12) + Prime × (1 − 22% cotis. − 14% impôt)",
+    };
+  };
 
   return (
     <div
@@ -477,6 +507,7 @@ export default function CalculatorForm() {
           </Card>
           {/* Carte Résultat */}
           <Card
+            id="result-card"
             className="rounded-3xl shadow-md border-none overflow-hidden relative p-1 sm:p-2 pb-2"
             style={{
               boxShadow:
@@ -499,6 +530,7 @@ export default function CalculatorForm() {
                 </HoverCardContent>
               </HoverCard>
             </CardHeader>
+
             <CardContent>
               {/* Intégration de ChargeBreakdown */}
               {values.rawBrut.monthly > 0 && (
@@ -511,6 +543,9 @@ export default function CalculatorForm() {
                   />
                 </div>
               )}
+              <div className="px-4 py-2 flex justify-end">
+                <PdfExporter />
+              </div>
             </CardContent>
           </Card>
         </div>
