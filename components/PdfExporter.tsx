@@ -71,17 +71,23 @@ const extractDataFromDOM = () => {
     });
 
     // Extraire le pourcentage de comparaison
-    const comparisonText = resultCard.textContent.match(
-      /représente\s+(\d+)\s*%/
-    );
-    if (comparisonText && comparisonText[1]) {
-      data.netComparaison = comparisonText[1];
+    if (resultCard.textContent) {
+      const comparisonText = resultCard.textContent.match(
+        /représente\s+(\d+)\s*%/
+      );
+      if (comparisonText && comparisonText[1]) {
+        data.netComparaison = comparisonText[1];
+      }
     }
 
     // Extraire directement depuis la barre de progression
     const progressBar = resultCard.querySelector(".bg-gradient-to-r");
-    if (progressBar && progressBar.style && progressBar.style.width) {
-      const width = progressBar.style.width;
+    if (
+      progressBar &&
+      (progressBar as HTMLElement).style &&
+      (progressBar as HTMLElement).style.width
+    ) {
+      const width = (progressBar as HTMLElement).style.width;
       const percentMatch = width.match(/(\d+)%/);
       if (percentMatch && percentMatch[1]) {
         data.netComparaison = percentMatch[1];

@@ -1,9 +1,9 @@
-import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
+import puppeteer from "puppeteer";
 
 async function fetchSmic() {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   await page.setUserAgent(
