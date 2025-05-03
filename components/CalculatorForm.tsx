@@ -87,35 +87,6 @@ export default function CalculatorForm() {
     form.setValue("hoursPerWeek", Math.round((35 * workPercent) / 100));
   }, [workPercent, form]);
 
-  // Fonction pour extraire les données du résultat pour le PDF
-  const getResultData = () => {
-    // TODO: Adapter selon ta logique/calculs réels
-    return {
-      status,
-      cotisations: {
-        percent: (22).toString(), // exemple
-        amount: values.brut.monthly.toLocaleString("fr-FR", {
-          minimumFractionDigits: 2,
-        }),
-      },
-      impot: {
-        percent: taxRate.toString(),
-        amount: (Number(values.brut.monthly) * (taxRate / 100)).toLocaleString(
-          "fr-FR",
-          { minimumFractionDigits: 2 }
-        ),
-      },
-      netApresImpot: values.net.monthly.toLocaleString("fr-FR", {
-        minimumFractionDigits: 2,
-      }),
-      netComparaison: "61", // exemple
-      annuelNet: values.net.yearly.toLocaleString("fr-FR", {
-        minimumFractionDigits: 2,
-      }),
-      formule: "(Net mensuel × 12) + Prime × (1 − 22% cotis. − 14% impôt)",
-    };
-  };
-
   return (
     <div
       className="w-full mx-auto px-2 sm:px-4"
