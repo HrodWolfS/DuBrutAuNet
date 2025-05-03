@@ -1,15 +1,19 @@
 # Du Brut au Net 🇫🇷
 
-Convertisseur de salaire brut ↔ net pour la France, avec support des différents statuts (CDI, CDD, fonction publique, alternance, auto-entrepreneur).
+Convertisseur de salaire brut ↔ net pour la France, avec support des différents statuts (cadre, non-cadre, fonction publique, portage salarial, auto-entrepreneur, profession libérale).
 
 ## Fonctionnalités
 
 - 💰 Conversion brut ↔ net instantanée
-- 📅 4 bases temporelles (horaire, journalier, mensuel, annuel)
+- 📅 3 bases temporelles (horaire, mensuel, annuel)
 - 👥 Support des statuts courants
 - 📊 Détail des charges et cotisations
 - 📱 Responsive et accessible
 - 🔄 Taux mis à jour automatiquement
+- 🖨️ Export PDF du résultat (via html2canvas + jsPDF)
+- ℹ️ Page d’informations (méthodologie et sources officielles)
+- 🌓 Dark Mode par défaut avec option de bascule
+- 🤖 CI/CD intégrée avec GitHub Actions (tests, build, déploiement)
 
 ## Installation
 
@@ -37,6 +41,32 @@ pnpm test
 ├── data/                  # Données statiques (taux)
 └── scripts/              # Scripts utilitaires
 ```
+
+## Export PDF
+
+Un bouton **Exporter en PDF** se trouve dans la carte Résultat.  
+Il génère un PDF haute résolution de votre simulation grâce à `html2canvas` et `jsPDF`.
+
+## Page d’informations
+
+La page **/info** détaille :
+
+- La formule de calcul utilisée (cotisations sociales puis impôt)
+- Les sources officielles (Urssaf, Insee, Service-Public)
+- Les limites et les dates de validité des données
+
+## Thèmes
+
+- Le **Dark Mode** est activé par défaut.
+- Utilisez l’icône en haut à droite pour basculer entre clair et sombre.
+
+## CI/CD (GitHub Actions)
+
+Les workflows GitHub Actions incluent :
+
+- Installation des dépendances, lint et tests unitaires
+- Build de l’application
+- Déploiement automatique sur Vercel
 
 ## Contribution
 
