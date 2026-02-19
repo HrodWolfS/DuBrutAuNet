@@ -47,7 +47,7 @@ export function useCalculator() {
 
   const hoursPerWeek = useMemo(
     () => Math.round((DEFAULT_HOURS * workPercent) / 100),
-    [workPercent]
+    [workPercent],
   );
   const charges = rates?.[status]?.employee ?? DEFAULT_CHARGES[status];
   const tax = taxRate / 100;
@@ -65,7 +65,7 @@ export function useCalculator() {
               };
               return acc;
             },
-            {} as RateJson
+            {} as RateJson,
           );
           setRates(merged);
         }
@@ -87,7 +87,7 @@ export function useCalculator() {
         return hoursPerWeek ? value / (hoursPerWeek * 52) : 0;
       return value;
     },
-    [hoursPerWeek]
+    [hoursPerWeek],
   );
 
   // Calculs principaux
@@ -117,29 +117,29 @@ export function useCalculator() {
       if (brut === "" || isNaN(Number(brut))) return 0;
       return Number(brut) * (1 - charges);
     },
-    [charges]
+    [charges],
   );
 
   const hourlyNet = useMemo(() => calcNet(hourlyBrut), [hourlyBrut, calcNet]);
   const dailyNet = useMemo(() => calcNet(dailyBrut), [dailyBrut, calcNet]);
   const monthlyNet = useMemo(
     () => calcNet(monthlyBrut),
-    [monthlyBrut, calcNet]
+    [monthlyBrut, calcNet],
   );
   const yearlyNet = useMemo(() => calcNet(yearlyBrut), [yearlyBrut, calcNet]);
 
   // Net après impôt (pour la card Résultat uniquement)
   const monthlyNetAfterTax = useMemo(
     () => calcNet(monthlyBrut) * (1 - tax),
-    [monthlyBrut, calcNet, tax]
+    [monthlyBrut, calcNet, tax],
   );
   const yearlyNetAfterTax = useMemo(
     () => calcNet(yearlyBrut) * (1 - tax),
-    [yearlyBrut, calcNet, tax]
+    [yearlyBrut, calcNet, tax],
   );
   const annualNetWithPrime = useMemo(
     () => Number(yearlyNetAfterTax) + Number(prime || 0),
-    [yearlyNetAfterTax, prime]
+    [yearlyNetAfterTax, prime],
   );
 
   // Valeurs pour l'interface utilisateur - non formatées
@@ -164,10 +164,22 @@ export function useCalculator() {
           : yearlyBrut,
     },
     net: {
-      hourly: hourlyNet,
-      daily: dailyNet,
-      monthly: monthlyNet,
-      yearly: yearlyNet,
+      hourly:
+        input.direction === "net" && input.period === "hourly"
+          ? input.value.toString()
+          : hourlyNet,
+      daily:
+        input.direction === "net" && input.period === "daily"
+          ? input.value.toString()
+          : dailyNet,
+      monthly:
+        input.direction === "net" && input.period === "monthly"
+          ? input.value.toString()
+          : monthlyNet,
+      yearly:
+        input.direction === "net" && input.period === "yearly"
+          ? input.value.toString()
+          : yearlyNet,
     },
     // Valeurs numériques brutes pour les calculs
     rawBrut: {
@@ -191,7 +203,7 @@ export function useCalculator() {
       const cleanValue = value.replace(/[^\d.,]/g, "").replace(/,/g, ".");
       setInput({ direction, period, value: cleanValue });
     },
-    []
+    [],
   );
 
   return [
