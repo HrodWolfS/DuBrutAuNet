@@ -89,11 +89,12 @@ interface SocialPyramidProps {
 export function SocialPyramid({ mensuelNet }: SocialPyramidProps) {
   const [showChart, setShowChart] = useState(false);
 
-  if (mensuelNet <= 0) return null;
+  const net = Number(mensuelNet);
+  if (!mensuelNet || isNaN(net) || net <= 0) return null;
 
-  const pct = toPercent(mensuelNet);
+  const pct = toPercent(net);
   const labelLeft = Math.min(Math.max(pct, 6), 94);
-  const isAboveScale = mensuelNet > SCALE_MAX;
+  const isAboveScale = net > SCALE_MAX;
 
   /* ── Calculs pour le graphique ── */
   const maxDensity = Math.max(...DISTRIBUTION.map((d) => d.density));
@@ -111,8 +112,8 @@ export function SocialPyramid({ mensuelNet }: SocialPyramidProps) {
     "Z",
   ].join(" ");
 
-  const userX = Math.min((mensuelNet / SCALE_MAX) * CHART_W, CHART_W);
-  const userDensity = interpolateDensity(mensuelNet);
+  const userX = Math.min((net / SCALE_MAX) * CHART_W, CHART_W);
+  const userDensity = interpolateDensity(net);
   const userDotY = CHART_H - (userDensity / maxDensity) * CHART_H;
 
   return (
@@ -130,7 +131,7 @@ export function SocialPyramid({ mensuelNet }: SocialPyramidProps) {
           >
             <span className="text-[10px] font-bold text-primary whitespace-nowrap">
               Vous ·{" "}
-              {mensuelNet.toLocaleString("fr-FR", {
+              {net.toLocaleString("fr-FR", {
                 style: "currency",
                 currency: "EUR",
                 maximumFractionDigits: 0,

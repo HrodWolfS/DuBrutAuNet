@@ -115,6 +115,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </Link>
           <div className="flex items-center space-x-4">
             <Link
+              href="/blog"
+              className="text-sm hover:text-primary transition-colors"
+            >
+              Blog
+            </Link>
+            <Link
               href="/info"
               className="text-sm hover:text-primary transition-colors"
             >

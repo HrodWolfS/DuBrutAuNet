@@ -1,10 +1,14 @@
+import typography from "@tailwindcss/typography";
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./content/**/*.{md,mdx}",
   ],
   theme: {
     container: {
@@ -15,6 +19,80 @@ export default {
       },
     },
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            "--tw-prose-body": "var(--foreground)",
+            "--tw-prose-headings": "var(--foreground)",
+            "--tw-prose-lead": "var(--muted-foreground)",
+            "--tw-prose-links": "var(--primary)",
+            "--tw-prose-bold": "var(--foreground)",
+            "--tw-prose-counters": "var(--muted-foreground)",
+            "--tw-prose-bullets": "var(--primary)",
+            "--tw-prose-hr": "var(--border)",
+            "--tw-prose-quotes": "var(--foreground)",
+            "--tw-prose-quote-borders": "var(--primary)",
+            "--tw-prose-captions": "var(--muted-foreground)",
+            "--tw-prose-code": "var(--primary)",
+            "--tw-prose-pre-code": "var(--foreground)",
+            "--tw-prose-pre-bg": "var(--secondary)",
+            "--tw-prose-th-borders": "var(--border)",
+            "--tw-prose-td-borders": "var(--border)",
+            a: {
+              color: "var(--primary)",
+              textDecoration: "none",
+              fontWeight: "500",
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            },
+            blockquote: {
+              borderLeftWidth: "4px",
+              borderLeftColor: "var(--primary)",
+              backgroundColor:
+                "color-mix(in srgb, var(--primary) 5%, transparent)",
+              padding: "1rem",
+              fontStyle: "italic",
+              borderRadius: "0 0.5rem 0.5rem 0",
+            },
+            "h2, h3": {
+              color: "var(--foreground)",
+              fontWeight: "700",
+            },
+            h2: {
+              position: "relative",
+              paddingBottom: "0.5rem",
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: "3rem",
+                height: "4px",
+                backgroundColor: "var(--primary)",
+                borderRadius: "2px",
+              },
+            },
+            code: {
+              color: "var(--primary)",
+              backgroundColor:
+                "color-mix(in srgb, var(--primary) 10%, transparent)",
+              padding: "0.2rem 0.4rem",
+              borderRadius: "0.25rem",
+              fontWeight: "600",
+            },
+            "code::before": {
+              content: '""',
+            },
+            "code::after": {
+              content: '""',
+            },
+            "ul > li::marker": {
+              color: "var(--primary)",
+            },
+          },
+        },
+      },
       colors: {
         border: "var(--border)",
         input: "var(--input)",
@@ -71,5 +149,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate, typography],
 } satisfies Config;
