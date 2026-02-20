@@ -449,14 +449,13 @@ export default function CalculatorForm() {
               taxRate={taxRate}
             />
 
-            {/* Spacer */}
-            <div className="flex-1" />
-
-            {/* PDF */}
-            <PdfExporter
-              buttonText="Télécharger le PDF"
-              buttonClassName="w-full flex items-center justify-center gap-2 bg-white text-primary font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-white/90 transition-all duration-150"
-            />
+            {/* PDF — mt-auto pousse vers le bas, pt-5 garantit l'espace */}
+            <div className="mt-auto pt-5">
+              <PdfExporter
+                buttonText="Télécharger le PDF"
+                buttonClassName="w-full flex items-center justify-center gap-2 bg-white text-primary font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-white/90 transition-all duration-150"
+              />
+            </div>
           </div>
         </div>
       </div>

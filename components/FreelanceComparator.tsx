@@ -113,9 +113,9 @@ export function FreelanceComparator({
             )}
           </div>
 
-          <p className="text-[9px] text-white/30 px-1 leading-relaxed">
-            Superbrut = brut × 1,45 · Net AE = Superbrut × (1 − 21,2 % URSSAF) ×
-            (1 − PAS) · Comparaison après même taux PAS dans les deux cas.
+          <p className="text-[10px] text-white/55 px-1 leading-relaxed">
+            Superbrut = brut × 1,45 · Net AE avant PAS = Superbrut × (1 − 21,2
+            %) · Les deux nets déduisent le même taux PAS.
           </p>
         </div>
       )}
