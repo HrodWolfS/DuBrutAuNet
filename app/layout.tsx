@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} dark`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <head>
         {/* Favicons */}
@@ -109,7 +109,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-50 w-full bg-background/80 border-b border-border flex items-center justify-between px-6 py-3 backdrop-blur">
           <Link
             href="/"
-            className="text-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)] bg-clip-text text-transparent font-bold tracking-tight"
+            className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors"
           >
             Du Brut au Net
           </Link>
@@ -123,7 +123,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ThemeToggle />
           </div>
         </header>
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex-1 flex items-start justify-center">
           {children}
         </main>
         <Footer />

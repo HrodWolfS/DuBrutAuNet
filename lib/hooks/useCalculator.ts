@@ -198,13 +198,16 @@ export function useCalculator() {
 
   const handleValueChange = useCallback(
     (value: string, period: Period, direction: Direction) => {
-      // Traiter la valeur entrée comme une chaîne brute
-      // Nettoyer uniquement les caractères non numériques, mais garder le point ou la virgule
       const cleanValue = value.replace(/[^\d.,]/g, "").replace(/,/g, ".");
       setInput({ direction, period, value: cleanValue });
     },
     [],
   );
+
+  const handleReset = useCallback(() => {
+    setInput({ direction: "brut", period: "hourly", value: "" });
+    setPrime(0);
+  }, []);
 
   return [
     {
@@ -220,6 +223,7 @@ export function useCalculator() {
     },
     {
       handleValueChange,
+      handleReset,
       setStatus,
       setTaxRate,
       setWorkPercent,
