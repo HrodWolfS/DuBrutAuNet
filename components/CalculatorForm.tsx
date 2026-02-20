@@ -445,6 +445,8 @@ export default function CalculatorForm() {
             <FreelanceComparator
               mensuelBrut={values.rawBrut.monthly}
               mensuelNetCDI={monthlyNetAfterTax}
+              status={status}
+              taxRate={taxRate}
             />
 
             {/* Spacer */}

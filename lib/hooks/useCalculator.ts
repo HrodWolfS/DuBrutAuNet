@@ -26,9 +26,14 @@ const DEFAULT_CHARGES = {
   PROFESSION_LIBERALE: 0.45,
 };
 
-function brutFromNet(net: number, charges: number, tax: number) {
-  // Inverse de net = brut * (1-charges) * (1-tax)
-  return net / ((1 - charges) * (1 - tax));
+/**
+ * Inverse de : net = brut × (1 - charges)
+ * Les champs "Net" représentent le salaire net avant prélèvement à la source,
+ * conformément à la définition du bulletin de paie français.
+ * Le PAS est appliqué séparément dans monthlyNetAfterTax / yearlyNetAfterTax.
+ */
+function brutFromNet(net: number, charges: number) {
+  return net / (1 - charges);
 }
 
 export function useCalculator() {
@@ -100,7 +105,7 @@ export function useCalculator() {
       baseBrut = getBrutFrom(Number(input.value), input.period);
     } else {
       const net = Number(input.value);
-      const brut = brutFromNet(net, charges, tax);
+      const brut = brutFromNet(net, charges);
       baseBrut = getBrutFrom(brut, input.period);
     }
     return {
@@ -109,7 +114,7 @@ export function useCalculator() {
       monthlyBrut: (baseBrut * hoursPerWeek * 52) / 12,
       yearlyBrut: baseBrut * hoursPerWeek * 52,
     };
-  }, [input, charges, tax, getBrutFrom, hoursPerWeek]);
+  }, [input, charges, getBrutFrom, hoursPerWeek]);
 
   // Net = brut - charges (sans impôt)
   const calcNet = useCallback(
