@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Du Brut au Net",
+    "slug": "du-brut-au-net",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "dubrutaunet",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dubrutaunet.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#16A34A"
+      },
+      "package": "com.dubrutaunet.mobile"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
