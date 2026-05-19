@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Share,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,6 +30,15 @@ const STATUS_OPTIONS: { key: StatusType; label: string }[] = [
   { key: "AUTO_ENTREPRENEUR", label: "Auto-Entrepreneur" },
   { key: "PORTAGE_SALARIAL", label: "Portage Salarial" },
 ];
+
+const STATUS_LABELS: Record<StatusType, string> = {
+  NON_CADRE: "Non Cadre",
+  CADRE: "Cadre",
+  FONCTION_PUBLIQUE: "Fonction Publique",
+  PROFESSION_LIBERALE: "Profession Libérale",
+  AUTO_ENTREPRENEUR: "Auto-Entrepreneur",
+  PORTAGE_SALARIAL: "Portage Salarial",
+};
 
 function formatVal(n: number): string {
   if (!isFinite(n) || isNaN(n)) return "0";
@@ -67,6 +77,29 @@ export default function CalculatorScreen() {
     setWorkPercent,
     setPrime,
   } = handlers;
+
+  const handleShare = async () => {
+    const fmt = (n: number) =>
+      n.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
+    const statusLabel = STATUS_LABELS[status];
+    const primeRow =
+      state.prime > 0
+        ? `\nAnnuel avec prime : ${fmt(state.annualNetWithPrime)} €`
+        : "";
+
+    const message =
+      `💰 Simulation Du Brut au Net\n\n` +
+      `Statut : ${statusLabel}\n` +
+      `Brut mensuel : ${fmt(values.monthlyBrut)} €\n\n` +
+      `Net mensuel après impôt : ${fmt(monthlyNetAfterTax)} €\n` +
+      `Net annuel : ${fmt(yearlyNetAfterTax)} €` +
+      primeRow +
+      `\n\nCotisations : ${(values.charges * 100).toFixed(1)}%` +
+      ` | PAS : ${taxRate}%` +
+      `\n\nCalculé avec Du Brut au Net 📱`;
+
+    await Share.share({ message });
+  };
 
   const getInputValue = (
     direction: DirectionType,
@@ -380,6 +413,16 @@ export default function CalculatorScreen() {
                 </View>
               </>
             )}
+
+            <View style={styles.resultDivider} />
+            <TouchableOpacity
+              style={styles.shareButton}
+              onPress={handleShare}
+              activeOpacity={0.75}
+            >
+              <Ionicons name="share-outline" size={16} color="#FFFFFF" />
+              <Text style={styles.shareButtonText}>Partager ma simulation</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -638,6 +681,20 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
+    },
+    shareButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingVertical: 8,
+      borderRadius: 8,
+      backgroundColor: "rgba(255,255,255,0.15)",
+    },
+    shareButtonText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: "#FFFFFF",
     },
   });
 }
