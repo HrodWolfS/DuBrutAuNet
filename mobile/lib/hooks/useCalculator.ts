@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ratesData from "../../data/rates_fr_2025.json";
+import { loadPrefs, savePrefs, clearPrefs } from "../storage";
 
 export type StatusType =
   | "NON_CADRE"
@@ -104,12 +105,37 @@ function getChargesRate(status: StatusType): number {
   return DEFAULT_CHARGES[status];
 }
 
-export function useCalculator(): [CalculatorState, CalculatorHandlers] {
+export function useCalculator(): [
+  CalculatorState,
+  CalculatorHandlers,
+  boolean,
+] {
   const [status, setStatusState] = useState<StatusType>("NON_CADRE");
   const [taxRate, setTaxRateState] = useState<number>(14);
   const [workPercent, setWorkPercentState] = useState<number>(100);
   const [prime, setPrimeState] = useState<number>(0);
   const [input, setInput] = useState<InputState>(DEFAULT_INPUT);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  // Load persisted prefs on mount
+  useEffect(() => {
+    loadPrefs().then((saved) => {
+      if (saved) {
+        setStatusState(saved.status);
+        setTaxRateState(saved.taxRate);
+        setWorkPercentState(saved.workPercent);
+        setPrimeState(saved.prime);
+        setInput(saved.input);
+      }
+      setIsReady(true);
+    });
+  }, []);
+
+  // Save prefs whenever inputs change (skip until loaded)
+  useEffect(() => {
+    if (!isReady) return;
+    savePrefs({ input, status, taxRate, workPercent, prime });
+  }, [input, status, taxRate, workPercent, prime, isReady]);
 
   const hoursPerWeek = Math.round((DEFAULT_HOURS * workPercent) / 100);
   const charges = getChargesRate(status);
@@ -164,6 +190,7 @@ export function useCalculator(): [CalculatorState, CalculatorHandlers] {
     setTaxRateState(14);
     setWorkPercentState(100);
     setPrimeState(0);
+    clearPrefs();
   };
 
   const setStatus = (s: StatusType) => setStatusState(s);
@@ -193,5 +220,5 @@ export function useCalculator(): [CalculatorState, CalculatorHandlers] {
     setPrime,
   };
 
-  return [state, handlers];
+  return [state, handlers, isReady];
 }

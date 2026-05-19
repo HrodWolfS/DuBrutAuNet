@@ -1,9 +1,9 @@
 import coreWebVitals from "eslint-config-next/core-web-vitals";
 import typescript from "eslint-config-next/typescript";
-import tsParser from "@typescript-eslint/parser";
 
-// Restrict Next.js/TS web rules to non-mobile files so ESLint can still
-// lint mobile/** files without the "file ignored" warning.
+// mobile/** is a separate Expo/React Native project with its own TS compiler.
+// Exclude it entirely from the root Next.js ESLint config to avoid
+// "File ignored because outside of base path" warnings.
 function excludeMobile(configs) {
   return configs.map((config) => {
     const keys = Object.keys(config);
@@ -16,17 +16,10 @@ function excludeMobile(configs) {
 }
 
 const eslintConfig = [
+  // Global ignore so ESLint never even opens mobile files
+  { ignores: ["mobile/**"] },
   ...excludeMobile(coreWebVitals),
   ...excludeMobile(typescript),
-  // Minimal config for React Native / Expo mobile files — TypeScript parser, no Next.js rules
-  {
-    files: ["mobile/**/*.{ts,tsx}"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: { ecmaFeatures: { jsx: true } },
-    },
-    rules: {},
-  },
 ];
 
 export default eslintConfig;
