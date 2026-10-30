@@ -54,6 +54,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <head>
+        {/* Applique le thème enregistré avant le premier rendu (évite le flash) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`,
+          }}
+        />
         {/* Favicons */}
         <link rel="icon" href="/favicon.ico" />
         <link
