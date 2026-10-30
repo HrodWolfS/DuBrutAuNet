@@ -1,0 +1,7 @@
+# Le dossier mobile/ est un projet Expo indépendant (npm), hors workspace.
+allowBuilds:
+  core-js: false
+  esbuild: true
+  puppeteer: true
+  sharp: true
+  unrs-resolver: true

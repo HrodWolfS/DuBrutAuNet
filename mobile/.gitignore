@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Prebuild natif (CNG) : ios/ et android/ sont régénérés par `expo prebuild` / EAS
+ios/
+android/
+
+# misc
+*.tsbuildinfo
+.DS_Store
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision

@@ -2,14 +2,15 @@
   "name": "dubrutaunet",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.8.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "scrape": "tsx scripts/scrape-rates.ts"
+    "scrape": "tsx scripts/scrape-smic.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

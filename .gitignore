@@ -43,3 +43,5 @@ next-env.d.ts
 # Cursor
 .cursorrules
 .cursor/rules/
+# Claude Code (worktrees, réglages locaux)
+/.claude/

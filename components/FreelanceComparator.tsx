@@ -3,17 +3,7 @@
 import { ChevronDown, Zap } from "lucide-react";
 import { useState } from "react";
 
-/**
- * Charges patronales moyennes (+45% du brut salarié).
- * Permet de calculer le Superbrut (coût total employeur).
- */
-const CHARGES_PATRONALES_RATE = 0.45;
-
-/**
- * Taux URSSAF Auto-entrepreneur — prestations de services (BIC).
- * Taux 2025 : 21,2 %. On retient 21,2 % pour la précision.
- */
-const URSSAF_AE_RATE = 0.212;
+import { freelanceEquivalent } from "@/shared/salary";
 
 /** Statuts pour lesquels la comparaison n'a pas de sens */
 const EXCLUDED_STATUSES = new Set(["AUTO_ENTREPRENEUR"]);
@@ -55,9 +45,7 @@ export function FreelanceComparator({
    * Les deux valeurs sont désormais comparées après prélèvement à la source
    * pour une comparaison équitable.
    */
-  const superBrut = mensuelBrut * (1 + CHARGES_PATRONALES_RATE);
-  const netAEAvantIR = superBrut * (1 - URSSAF_AE_RATE);
-  const netAE = netAEAvantIR * (1 - taxRate / 100);
+  const { superBrut, netAfterTax: netAE } = freelanceEquivalent(mensuelBrut, taxRate);
 
   // Comparaison : net AE après PAS vs net CDI après PAS
   const diff = netAE - mensuelNetCDI;

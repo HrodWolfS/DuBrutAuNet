@@ -3,87 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
 import { getTheme } from "../constants/theme";
-import { StatusType } from "../lib/hooks/useCalculator";
-
-interface ChargeItem {
-  label: string;
-  rate: number;
-}
-
-const CHARGE_ITEMS: Record<StatusType, ChargeItem[]> = {
-  NON_CADRE: [
-    { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-    { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-    { label: "Retraite complémentaire T1", rate: 0.0315 },
-    { label: "CEG T1", rate: 0.0086 },
-    { label: "CET", rate: 0.0014 },
-    { label: "CSG déductible", rate: 0.068 },
-    { label: "CSG non déductible", rate: 0.024 },
-    { label: "CRDS", rate: 0.005 },
-  ],
-  CADRE: [
-    { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-    { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-    { label: "Retraite complémentaire T1", rate: 0.0315 },
-    { label: "CEG T1", rate: 0.0086 },
-    { label: "CET", rate: 0.0014 },
-    { label: "CSG déductible", rate: 0.068 },
-    { label: "CSG non déductible", rate: 0.024 },
-    { label: "CRDS", rate: 0.005 },
-    { label: "Retraite T2", rate: 0.0864 },
-    { label: "CEG T2", rate: 0.0108 },
-    { label: "APEC", rate: 0.00024 },
-  ],
-  FONCTION_PUBLIQUE: [
-    { label: "Pension civile", rate: 0.111 },
-    { label: "RAFP", rate: 0.05 },
-    { label: "CSG déductible", rate: 0.068 },
-    { label: "CSG non déductible", rate: 0.024 },
-    { label: "CRDS", rate: 0.005 },
-  ],
-  AUTO_ENTREPRENEUR: [{ label: "Forfait social", rate: 0.212 }],
-  PORTAGE_SALARIAL: [
-    { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-    { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-    { label: "Retraite complémentaire T1", rate: 0.0315 },
-    { label: "CEG T1", rate: 0.0086 },
-    { label: "CET", rate: 0.0014 },
-    { label: "CSG déductible", rate: 0.068 },
-    { label: "CSG non déductible", rate: 0.024 },
-    { label: "CRDS", rate: 0.005 },
-  ],
-  PROFESSION_LIBERALE: [
-    { label: "Maladie-maternité", rate: 0.065 },
-    { label: "IJ", rate: 0.005 },
-    { label: "Allocations familiales", rate: 0.031 },
-    { label: "Retraite de base", rate: 0.0873 },
-    { label: "Retraite complémentaire T1", rate: 0.09 },
-    { label: "Retraite complémentaire T2", rate: 0.22 },
-    { label: "Invalidité-décès", rate: 0.013 },
-    { label: "CSG déductible", rate: 0.068 },
-    { label: "CSG non déductible", rate: 0.024 },
-    { label: "CRDS", rate: 0.005 },
-    { label: "CFP", rate: 0.0025 },
-  ],
-};
-
-const GLOBAL_RATE: Record<StatusType, number> = {
-  NON_CADRE: 0.22,
-  CADRE: 0.245,
-  PORTAGE_SALARIAL: 0.22,
-  FONCTION_PUBLIQUE: 0.167,
-  PROFESSION_LIBERALE: 0.3567,
-  AUTO_ENTREPRENEUR: 0.212,
-};
-
-const AVERAGE_NET: Record<StatusType, number> = {
-  NON_CADRE: 1950,
-  CADRE: 3375,
-  FONCTION_PUBLIQUE: 2527,
-  PORTAGE_SALARIAL: 4000,
-  AUTO_ENTREPRENEUR: 1650,
-  PROFESSION_LIBERALE: 3000,
-};
+import {
+  effectiveRate,
+  employeeRate,
+  RATES,
+  type StatusType,
+} from "../../shared/salary";
 
 interface ChargeBreakdownProps {
   status: StatusType;
@@ -96,11 +21,11 @@ export function ChargeBreakdown({ status, monthlyBrut }: ChargeBreakdownProps) {
   const theme = getTheme(scheme);
   const styles = makeStyles(theme);
 
-  const items = CHARGE_ITEMS[status];
-  const globalRate = GLOBAL_RATE[status];
+  const items = RATES.statuses[status].items;
+  const globalRate = employeeRate(status);
   const totalCharges = monthlyBrut * globalRate;
   const monthlyNet = monthlyBrut * (1 - globalRate);
-  const avgNet = AVERAGE_NET[status];
+  const avgNet = RATES.averageNet[status].value;
 
   return (
     <View style={styles.container}>
@@ -164,10 +89,10 @@ export function ChargeBreakdown({ status, monthlyBrut }: ChargeBreakdownProps) {
                 {item.label}
               </Text>
               <Text style={styles.itemRate}>
-                {(item.rate * 100).toFixed(2)}%
+                {(effectiveRate(item) * 100).toFixed(2)}%
               </Text>
               <Text style={styles.itemAmount}>
-                {(monthlyBrut * item.rate).toLocaleString("fr-FR", {
+                {(monthlyBrut * effectiveRate(item)).toLocaleString("fr-FR", {
                   maximumFractionDigits: 0,
                 })}{" "}
                 €

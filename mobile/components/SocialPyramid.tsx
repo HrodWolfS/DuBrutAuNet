@@ -17,14 +17,9 @@ import Svg, {
 } from "react-native-svg";
 import { Ionicons } from "@expo/vector-icons";
 import { getTheme } from "../constants/theme";
+import { salaryBenchmarks } from "../../shared/salary";
 
-const BENCHMARKS = [
-  { label: "SMIC Net", value: 1398 },
-  { label: "Médian", value: 2100 },
-  { label: "Moyen", value: 2600 },
-  { label: "Top 10%", value: 4000 },
-  { label: "Top 1%", value: 7000 },
-];
+const BENCHMARKS = salaryBenchmarks();
 
 const SCALE_MAX = 7000;
 
