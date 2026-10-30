@@ -21,6 +21,7 @@ import {
   PeriodType,
 } from "../../lib/hooks/useCalculator";
 import { getTheme } from "../../constants/theme";
+import { ESTIMATE_NOTICE } from "../../../shared/legal";
 
 const STATUS_OPTIONS: { key: StatusType; label: string }[] = [
   { key: "NON_CADRE", label: "Non Cadre" },
@@ -96,7 +97,8 @@ export default function CalculatorScreen() {
       primeRow +
       `\n\nCotisations : ${(values.charges * 100).toFixed(1)}%` +
       ` | PAS : ${taxRate}%` +
-      `\n\nCalculé avec Du Brut au Net 📱`;
+      `\n\n${ESTIMATE_NOTICE}` +
+      `\nCalculé avec Du Brut au Net 📱`;
 
     await Share.share({ message });
   };
@@ -378,6 +380,7 @@ export default function CalculatorScreen() {
             <Text style={styles.resultMain}>
               {formatCurrency(monthlyNetAfterTax)} €
             </Text>
+            <Text style={styles.resultNotice}>{ESTIMATE_NOTICE}</Text>
 
             <View style={styles.resultDivider} />
 
@@ -648,6 +651,10 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       fontWeight: "800",
       color: "#FFFFFF",
       marginBottom: 4,
+    },
+    resultNotice: {
+      fontSize: 11,
+      color: "rgba(255,255,255,0.75)",
     },
     resultDivider: {
       height: 1,
