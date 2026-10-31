@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,9 @@ import {
 } from "../../lib/hooks/useCalculator";
 import { getTheme } from "../../constants/theme";
 import { ESTIMATE_NOTICE } from "../../../shared/legal";
+import { haptics } from "../../lib/haptics";
+import { STATUS_LABELS } from "../../constants/status";
+import { useSimulations } from "../../context/SimulationsContext";
 
 const STATUS_OPTIONS: { key: StatusType; label: string }[] = [
   { key: "NON_CADRE", label: "Non Cadre" },
@@ -31,15 +34,6 @@ const STATUS_OPTIONS: { key: StatusType; label: string }[] = [
   { key: "AUTO_ENTREPRENEUR", label: "Auto-Entrepreneur" },
   { key: "PORTAGE_SALARIAL", label: "Portage Salarial" },
 ];
-
-const STATUS_LABELS: Record<StatusType, string> = {
-  NON_CADRE: "Non Cadre",
-  CADRE: "Cadre",
-  FONCTION_PUBLIQUE: "Fonction Publique",
-  PROFESSION_LIBERALE: "Profession Libérale",
-  AUTO_ENTREPRENEUR: "Auto-Entrepreneur",
-  PORTAGE_SALARIAL: "Portage Salarial",
-};
 
 function formatVal(n: number): string {
   if (!isFinite(n) || isNaN(n)) return "0";
@@ -78,6 +72,20 @@ export default function CalculatorScreen() {
     setWorkPercent,
     setPrime,
   } = handlers;
+  const { save } = useSimulations();
+  const [justSaved, setJustSaved] = useState(false);
+
+  useEffect(() => {
+    if (!justSaved) return;
+    const timer = setTimeout(() => setJustSaved(false), 2000);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
+
+  const handleSave = () => {
+    save({ input: state.input, status, taxRate, workPercent, prime });
+    haptics.success();
+    setJustSaved(true);
+  };
 
   const handleShare = async () => {
     const fmt = (n: number) =>
@@ -100,7 +108,29 @@ export default function CalculatorScreen() {
       `\n\n${ESTIMATE_NOTICE}` +
       `\nCalculé avec Du Brut au Net 📱`;
 
+    haptics.light();
     await Share.share({ message });
+  };
+
+  const onReset = () => {
+    haptics.warning();
+    handleReset();
+  };
+
+  const onStatusPress = (next: StatusType) => {
+    if (next !== status) haptics.selection();
+    setStatus(next);
+  };
+
+  // Sliders report every step crossed; tick once per new value.
+  const onWorkPercentChange = (next: number) => {
+    if (next !== workPercent) haptics.selection();
+    setWorkPercent(next);
+  };
+
+  const onTaxRateChange = (next: number) => {
+    if (next !== taxRate) haptics.selection();
+    setTaxRate(next);
   };
 
   const getInputValue = (
@@ -161,7 +191,7 @@ export default function CalculatorScreen() {
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>Du Brut au Net</Text>
             <TouchableOpacity
-              onPress={handleReset}
+              onPress={onReset}
               style={styles.resetButton}
               activeOpacity={0.7}
             >
@@ -279,7 +309,7 @@ export default function CalculatorScreen() {
                     styles.statusButton,
                     status === opt.key && styles.statusButtonActive,
                   ]}
-                  onPress={() => setStatus(opt.key)}
+                  onPress={() => onStatusPress(opt.key)}
                   activeOpacity={0.7}
                 >
                   <View
@@ -317,7 +347,7 @@ export default function CalculatorScreen() {
                 maximumValue={100}
                 step={5}
                 value={workPercent}
-                onValueChange={setWorkPercent}
+                onValueChange={onWorkPercentChange}
                 minimumTrackTintColor={theme.primary}
                 maximumTrackTintColor={theme.border}
                 thumbTintColor={theme.primary}
@@ -341,7 +371,7 @@ export default function CalculatorScreen() {
                 maximumValue={45}
                 step={1}
                 value={taxRate}
-                onValueChange={setTaxRate}
+                onValueChange={onTaxRateChange}
                 minimumTrackTintColor={theme.primary}
                 maximumTrackTintColor={theme.border}
                 thumbTintColor={theme.primary}
@@ -418,14 +448,31 @@ export default function CalculatorScreen() {
             )}
 
             <View style={styles.resultDivider} />
-            <TouchableOpacity
-              style={styles.shareButton}
-              onPress={handleShare}
-              activeOpacity={0.75}
-            >
-              <Ionicons name="share-outline" size={16} color="#FFFFFF" />
-              <Text style={styles.shareButtonText}>Partager ma simulation</Text>
-            </TouchableOpacity>
+            <View style={styles.actionRow}>
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={handleSave}
+                activeOpacity={0.75}
+                accessibilityHint="Ajoute la simulation à l'onglet Simulations"
+              >
+                <Ionicons
+                  name={justSaved ? "checkmark" : "bookmark-outline"}
+                  size={16}
+                  color="#FFFFFF"
+                />
+                <Text style={styles.shareButtonText}>
+                  {justSaved ? "Enregistrée" : "Enregistrer"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={handleShare}
+                activeOpacity={0.75}
+              >
+                <Ionicons name="share-outline" size={16} color="#FFFFFF" />
+                <Text style={styles.shareButtonText}>Partager</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -689,7 +736,12 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       justifyContent: "space-between",
       alignItems: "center",
     },
+    actionRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
     shareButton: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",

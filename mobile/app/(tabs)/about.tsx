@@ -24,6 +24,17 @@ import {
   SOURCES,
   SUPPORT_URL,
 } from "../../../shared/legal";
+import {
+  useThemePreference,
+  type ThemePreference,
+} from "../../context/ThemePreferenceContext";
+import { haptics } from "../../lib/haptics";
+
+const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
+  { key: "auto", label: "Automatique" },
+  { key: "light", label: "Clair" },
+  { key: "dark", label: "Sombre" },
+];
 
 const formatPercent = (rate: number) =>
   `${(rate * 100).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} %`;
@@ -32,6 +43,13 @@ export default function AboutScreen() {
   const scheme = useColorScheme();
   const theme = getTheme(scheme);
   const styles = makeStyles(theme);
+  const { preference, setPreference } = useThemePreference();
+
+  const onThemePress = (next: ThemePreference) => {
+    if (next === preference) return;
+    haptics.selection();
+    setPreference(next);
+  };
 
   const LinkRow = ({ label, url }: { label: string; url: string }) => (
     <TouchableOpacity
@@ -56,6 +74,34 @@ export default function AboutScreen() {
           {ratesValidityLabel()} · mis à jour le{" "}
           {formatFrenchDate(RATES.lastUpdate)}
         </Text>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Apparence</Text>
+          <View style={styles.segmented} accessibilityRole="radiogroup">
+            {THEME_OPTIONS.map((opt) => {
+              const selected = opt.key === preference;
+              return (
+                <TouchableOpacity
+                  key={opt.key}
+                  style={[styles.segment, selected && styles.segmentActive]}
+                  onPress={() => onThemePress(opt.key)}
+                  activeOpacity={0.7}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected }}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      selected && styles.segmentTextActive,
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Comment est calculé le net ?</Text>
@@ -171,6 +217,33 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       fontSize: 13,
       fontWeight: "700",
       color: theme.primary,
+    },
+    segmented: {
+      flexDirection: "row",
+      padding: 3,
+      borderRadius: 8,
+      backgroundColor: theme.muted,
+    },
+    segment: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 7,
+      borderRadius: 6,
+    },
+    segmentActive: {
+      backgroundColor: theme.card,
+      shadowColor: "#000",
+      shadowOpacity: 0.08,
+      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 1 },
+    },
+    segmentText: {
+      fontSize: 13,
+      color: theme.mutedForeground,
+    },
+    segmentTextActive: {
+      color: theme.foreground,
+      fontWeight: "600",
     },
     linkRow: {
       flexDirection: "row",
