@@ -2,17 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://dubrutaunet.fr/</loc>
-    <lastmod>2024-06-10</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://dubrutaunet.fr/info</loc>
-    <lastmod>2024-06-10</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dubrutaunet.fr/2800-brut-en-net</loc>
-    <lastmod>2024-06-10</lastmod>
-    <priority>0.7</priority>
+    <loc>https://dubrutaunet.fr/support</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.5</priority>
   </url>
-</urlset> 
+  <url>
+    <loc>https://dubrutaunet.fr/confidentialite</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dubrutaunet.fr/mentions-legales</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.3</priority>
+  </url>
+</urlset>
