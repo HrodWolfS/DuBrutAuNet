@@ -8,6 +8,7 @@ import {
 interface CalculatorContextValue {
   state: CalculatorState;
   handlers: CalculatorHandlers;
+  isReady: boolean;
 }
 
 const CalculatorContext = createContext<CalculatorContextValue | null>(null);
@@ -17,10 +18,10 @@ export function CalculatorProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [state, handlers] = useCalculator();
+  const [state, handlers, isReady] = useCalculator();
 
   return (
-    <CalculatorContext.Provider value={{ state, handlers }}>
+    <CalculatorContext.Provider value={{ state, handlers, isReady }}>
       {children}
     </CalculatorContext.Provider>
   );

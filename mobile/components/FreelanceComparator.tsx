@@ -3,10 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
 import { getTheme } from "../constants/theme";
-import { StatusType } from "../lib/hooks/useCalculator";
-
-const CHARGES_PATRONALES_RATE = 0.45;
-const URSSAF_AE_RATE = 0.212;
+import { freelanceEquivalent, type StatusType } from "../../shared/salary";
 
 interface FreelanceComparatorProps {
   status: StatusType;
@@ -30,9 +27,11 @@ export function FreelanceComparator({
     return null;
   }
 
-  const superBrut = mensuelBrut * (1 + CHARGES_PATRONALES_RATE);
-  const netAEAvantIR = superBrut * (1 - URSSAF_AE_RATE);
-  const netAE = netAEAvantIR * (1 - taxRate / 100);
+  const {
+    superBrut,
+    netBeforeTax: netAEAvantIR,
+    netAfterTax: netAE,
+  } = freelanceEquivalent(mensuelBrut, taxRate);
   const diff = netAE - mensuelNetCDI;
   const isPositive = diff >= 0;
 
@@ -157,7 +156,7 @@ export function FreelanceComparator({
               </Text>
               <Text style={styles.detailValue}>
                 -
-                {(superBrut * URSSAF_AE_RATE).toLocaleString("fr-FR", {
+                {(superBrut - netAEAvantIR).toLocaleString("fr-FR", {
                   maximumFractionDigits: 0,
                 })}{" "}
                 €

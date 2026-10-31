@@ -13,125 +13,18 @@ import {
 } from "@/components/ui/hover-card";
 
 import { Card } from "@/components/ui/card";
-import { type Input as SalaryInput } from "@/lib/convert";
+import {
+  effectiveRate,
+  employeeRate,
+  RATES,
+  type StatusType,
+} from "@/shared/salary";
 
-const AVERAGE_NET: Record<
-  keyof typeof CHARGES_LABELS,
-  { value: number; source: string }
-> = {
-  NON_CADRE: {
-    value: 1950,
-    source: "https://www.insee.fr/fr/statistiques/7457170",
-  },
-  CADRE: {
-    value: 3375,
-    source: "https://www.apec.fr/actualites/etudes/salaire-moyen-cadres.html",
-  },
-  FONCTION_PUBLIQUE: {
-    value: 2527,
-    source: "https://www.insee.fr/fr/statistiques/2381332",
-  },
-  PORTAGE_SALARIAL: {
-    value: 4000,
-    source:
-      "https://syndicatportagesalarial.fr/branche/chiffres-portage-salarial/",
-  },
-  AUTO_ENTREPRENEUR: {
-    value: 1650,
-    source:
-      "https://www.hellowork.com/fr-fr/medias/salaire-auto-entrepreneur.html",
-  },
-  PROFESSION_LIBERALE: {
-    value: 3000,
-    source: "https://www.insee.fr/fr/statistiques/4470782?sommaire=4470890",
-  },
-};
-
-const GLOBAL_RATE: Record<keyof typeof CHARGES_LABELS, number> = {
-  NON_CADRE: 0.22,
-  CADRE: 0.245,
-  PORTAGE_SALARIAL: 0.22,
-  FONCTION_PUBLIQUE: 0.167,
-  PROFESSION_LIBERALE: 0.3567,
-  AUTO_ENTREPRENEUR: 0.212,
-};
-
-const CHARGES_LABELS = {
-  NON_CADRE: {
-    title: "Charges salariales (Non‑cadre)",
-    items: [
-      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-      { label: "Retraite complémentaire – Tranche 1", rate: 0.0315 },
-      { label: "CEG – Tranche 1", rate: 0.0086 },
-      { label: "CET", rate: 0.0014 },
-      { label: "CSG déductible", rate: 0.068 },
-      { label: "CSG non déductible", rate: 0.024 },
-      { label: "CRDS", rate: 0.005 },
-    ],
-  },
-  CADRE: {
-    title: "Charges salariales (Cadre)",
-    items: [
-      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-      { label: "Retraite complémentaire – Tranche 1", rate: 0.0315 },
-      { label: "Retraite complémentaire – Tranche 2", rate: 0.0864 },
-      { label: "CEG – Tranche 1", rate: 0.0086 },
-      { label: "CEG – Tranche 2", rate: 0.0108 },
-      { label: "Cotisation APEC", rate: 0.00024 },
-      { label: "CSG déductible", rate: 0.068 },
-      { label: "CSG non déductible", rate: 0.024 },
-      { label: "CRDS", rate: 0.005 },
-    ],
-  },
-  FONCTION_PUBLIQUE: {
-    title: "Charges salariales (Fonction publique)",
-    items: [
-      { label: "Pension civile (retraite de base)", rate: 0.111 },
-      { label: "RAFP (retraite additionnelle)", rate: 0.05 },
-      { label: "CSG déductible", rate: 0.068 },
-      { label: "CSG non déductible", rate: 0.024 },
-      { label: "CRDS", rate: 0.005 },
-    ],
-  },
-  PORTAGE_SALARIAL: {
-    title: "Charges salariales (Portage)",
-    items: [
-      { label: "Assurance vieillesse plafonnée", rate: 0.069 },
-      { label: "Assurance vieillesse déplafonnée", rate: 0.004 },
-      { label: "Retraite complémentaire – Tranche 1", rate: 0.0315 },
-      { label: "CEG – Tranche 1", rate: 0.0086 },
-      { label: "CET", rate: 0.0014 },
-      { label: "CSG déductible", rate: 0.068 },
-      { label: "CSG non déductible", rate: 0.024 },
-      { label: "CRDS", rate: 0.005 },
-    ],
-  },
-  AUTO_ENTREPRENEUR: {
-    title: "Cotisations (Micro‑entrepreneur)",
-    items: [{ label: "Forfait social", rate: 0.212 }],
-  },
-  PROFESSION_LIBERALE: {
-    title: "Cotisations sociales (Prof. libérale)",
-    items: [
-      { label: "Maladie‑maternité (taux plein)", rate: 0.065 },
-      { label: "Indemnités journalières", rate: 0.005 },
-      { label: "Allocations familiales", rate: 0.031 },
-      { label: "Retraite de base (≤ 1 PASS)", rate: 0.0873 },
-      { label: "Retraite complémentaire – Tranche 1", rate: 0.09 },
-      { label: "Retraite complémentaire – Tranche 2", rate: 0.22 },
-      { label: "Invalidité‑décès", rate: 0.013 },
-      { label: "CSG déductible", rate: 0.068 },
-      { label: "CSG non déductible", rate: 0.024 },
-      { label: "CRDS", rate: 0.005 },
-      { label: "CFP", rate: 0.0025 },
-    ],
-  },
-} as const;
+const AVERAGE_NET = RATES.averageNet;
+const CHARGES_LABELS = RATES.statuses;
 
 interface Props {
-  status: SalaryInput["status"];
+  status: StatusType;
   brutAmount?: number;
   taxRate: number;
   annualNetWithPrime?: number | "";
@@ -144,6 +37,7 @@ export function ChargeBreakdown({
   annualNetWithPrime,
 }: Props) {
   const { title } = CHARGES_LABELS[status];
+  const globalRate = employeeRate(status);
   if (!brutAmount || isNaN(brutAmount)) {
     return (
       <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-r from-[var(--primary)] to-[var(--chart-4)]">
@@ -164,10 +58,10 @@ export function ChargeBreakdown({
             <span className="truncate pr-2">Total cotisations sociales</span>
             <div className="flex gap-2 sm:gap-4 flex-shrink-0">
               <span className="text-muted-foreground">
-                {(GLOBAL_RATE[status] * 100).toFixed(1)}%
+                {(globalRate * 100).toFixed(1)}%
               </span>
               <span>
-                {(brutAmount * GLOBAL_RATE[status]).toLocaleString("fr-FR", {
+                {(brutAmount * globalRate).toLocaleString("fr-FR", {
                   style: "currency",
                   currency: "EUR",
                 })}
@@ -181,7 +75,7 @@ export function ChargeBreakdown({
               <span className="text-muted-foreground">{taxRate}%</span>
               <span>
                 {(
-                  ((brutAmount - brutAmount * GLOBAL_RATE[status]) * taxRate) /
+                  ((brutAmount - brutAmount * globalRate) * taxRate) /
                   100
                 ).toLocaleString("fr-FR", {
                   style: "currency",
@@ -195,7 +89,7 @@ export function ChargeBreakdown({
             <span className="truncate pr-2">Net après impôt</span>
             <span className="flex-shrink-0">
               {(
-                (brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                (brutAmount - brutAmount * globalRate) *
                 (1 - taxRate / 100)
               ).toLocaleString("fr-FR", {
                 style: "currency",
@@ -210,14 +104,14 @@ export function ChargeBreakdown({
               className="h-full bg-primary transition-all"
               style={{
                 width: `${
-                  (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                  (((brutAmount - brutAmount * globalRate) *
                     (1 - taxRate / 100)) /
                     brutAmount) *
                   100
                 }%`,
               }}
               title={`Net : ${(
-                (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                (((brutAmount - brutAmount * globalRate) *
                   (1 - taxRate / 100)) /
                   brutAmount) *
                 100
@@ -232,7 +126,7 @@ export function ChargeBreakdown({
                 <div className="text-[10px] sm:text-xs text-right text-muted-foreground cursor-help underline decoration-dotted line-clamp-2 sm:line-clamp-none">
                   Votre net représente&nbsp;
                   {(
-                    (((brutAmount - brutAmount * GLOBAL_RATE[status]) *
+                    (((brutAmount - brutAmount * globalRate) *
                       (1 - taxRate / 100)) /
                       AVERAGE_NET[status].value) *
                     100
@@ -284,10 +178,10 @@ export function ChargeBreakdown({
                     <span className="truncate pr-2">{item.label}</span>
                     <div className="flex gap-2 sm:gap-4 flex-shrink-0">
                       <span className="text-muted-foreground">
-                        {(item.rate * 100).toFixed(1)}%
+                        {(effectiveRate(item) * 100).toFixed(2)}%
                       </span>
                       <span>
-                        {(brutAmount * item.rate).toLocaleString("fr-FR", {
+                        {(brutAmount * effectiveRate(item)).toLocaleString("fr-FR", {
                           style: "currency",
                           currency: "EUR",
                         })}
@@ -296,6 +190,11 @@ export function ChargeBreakdown({
                   </li>
                 ))}
               </ul>
+              {CHARGES_LABELS[status].note && (
+                <p className="text-[10px] sm:text-xs text-muted-foreground pt-2 pl-2">
+                  {CHARGES_LABELS[status].note}
+                </p>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -315,8 +214,8 @@ export function ChargeBreakdown({
               </span>
             </div>
             <div className="text-[10px] sm:text-xs text-muted-foreground text-right mt-1">
-              (Net mensuel × 12) + Prime × (1 − {GLOBAL_RATE[status] * 100}%
-              cotis. − {taxRate}% impôt)
+              (Net mensuel × 12) + Prime × (1 − {(globalRate * 100).toFixed(1)}%
+              cotis.) × (1 − {taxRate}% impôt)
             </div>
           </div>
         )}

@@ -3,18 +3,9 @@
 import { BarChart2 } from "lucide-react";
 import { useState } from "react";
 
-interface Benchmark {
-  label: string;
-  value: number;
-}
+import { salaryBenchmarks, type Benchmark } from "@/shared/salary";
 
-const BENCHMARKS: readonly Benchmark[] = [
-  { label: "SMIC Net", value: 1398 },
-  { label: "Médian", value: 2100 },
-  { label: "Moyen", value: 2600 },
-  { label: "Top 10%", value: 4000 },
-  { label: "Top 1%", value: 7000 },
-] as const;
+const BENCHMARKS: readonly Benchmark[] = salaryBenchmarks();
 
 const SCALE_MAX = 7000;
 

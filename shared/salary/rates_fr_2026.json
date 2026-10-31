@@ -1,0 +1,107 @@
+{
+  "version": "2026-06",
+  "validFrom": "2026-06-01",
+  "lastUpdate": "2026-10-30",
+  "legalHoursPerWeek": 35,
+  "smic": {
+    "hourly": 12.31,
+    "monthly": 1867.02,
+    "source": "https://www.service-public.fr/particuliers/vosdroits/F2300"
+  },
+  "pass": {
+    "yearly": 48060,
+    "monthly": 4005,
+    "source": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+  },
+  "employerChargesRate": 0.45,
+  "statuses": {
+    "NON_CADRE": {
+      "title": "Charges salariales (Non‑cadre)",
+      "items": [
+        { "label": "Assurance vieillesse plafonnée", "rate": 0.069 },
+        { "label": "Assurance vieillesse déplafonnée", "rate": 0.004 },
+        { "label": "Retraite complémentaire – Tranche 1", "rate": 0.0315 },
+        { "label": "CEG – Tranche 1", "rate": 0.0086 },
+        { "label": "CSG déductible", "rate": 0.068, "base": 0.9825 },
+        { "label": "CSG non déductible", "rate": 0.024, "base": 0.9825 },
+        { "label": "CRDS", "rate": 0.005, "base": 0.9825 },
+        { "label": "Mutuelle et prévoyance (estimation)", "rate": 0.0116 }
+      ]
+    },
+    "CADRE": {
+      "title": "Charges salariales (Cadre)",
+      "items": [
+        { "label": "Assurance vieillesse plafonnée", "rate": 0.069 },
+        { "label": "Assurance vieillesse déplafonnée", "rate": 0.004 },
+        { "label": "Retraite complémentaire – Tranche 1", "rate": 0.0315 },
+        { "label": "CEG – Tranche 1", "rate": 0.0086 },
+        { "label": "CET", "rate": 0.0014 },
+        { "label": "Cotisation APEC", "rate": 0.00024 },
+        { "label": "CSG déductible", "rate": 0.068, "base": 0.9825 },
+        { "label": "CSG non déductible", "rate": 0.024, "base": 0.9825 },
+        { "label": "CRDS", "rate": 0.005, "base": 0.9825 },
+        { "label": "Mutuelle, prévoyance cadre et tranche 2 (estimation)", "rate": 0.03496 }
+      ]
+    },
+    "PORTAGE_SALARIAL": {
+      "title": "Charges salariales (Portage)",
+      "items": [
+        { "label": "Assurance vieillesse plafonnée", "rate": 0.069 },
+        { "label": "Assurance vieillesse déplafonnée", "rate": 0.004 },
+        { "label": "Retraite complémentaire – Tranche 1", "rate": 0.0315 },
+        { "label": "CEG – Tranche 1", "rate": 0.0086 },
+        { "label": "CSG déductible", "rate": 0.068, "base": 0.9825 },
+        { "label": "CSG non déductible", "rate": 0.024, "base": 0.9825 },
+        { "label": "CRDS", "rate": 0.005, "base": 0.9825 },
+        { "label": "Mutuelle et prévoyance (estimation)", "rate": 0.0116 }
+      ]
+    },
+    "FONCTION_PUBLIQUE": {
+      "title": "Charges salariales (Fonction publique)",
+      "note": "Hypothèse : primes = 20 % de la rémunération brute (traitement indiciaire = 80 %).",
+      "items": [
+        { "label": "Pension civile (sur le traitement indiciaire)", "rate": 0.111, "base": 0.8 },
+        { "label": "RAFP (sur les primes)", "rate": 0.05, "base": 0.2 },
+        { "label": "CSG déductible", "rate": 0.068, "base": 0.9825 },
+        { "label": "CSG non déductible", "rate": 0.024, "base": 0.9825 },
+        { "label": "CRDS", "rate": 0.005, "base": 0.9825 }
+      ]
+    },
+    "AUTO_ENTREPRENEUR": {
+      "title": "Cotisations (Micro‑entrepreneur)",
+      "note": "Prestations de services commerciales ou artisanales (BIC).",
+      "items": [{ "label": "Cotisations sociales URSSAF (BIC services)", "rate": 0.212 }]
+    },
+    "PROFESSION_LIBERALE": {
+      "title": "Cotisations sociales (Prof. libérale)",
+      "note": "Taux pleins pour un revenu proche d'un PASS, hors taux progressifs.",
+      "items": [
+        { "label": "Maladie‑maternité", "rate": 0.065 },
+        { "label": "Indemnités journalières", "rate": 0.003 },
+        { "label": "Allocations familiales", "rate": 0.031 },
+        { "label": "Retraite de base (≤ 1 PASS)", "rate": 0.0873 },
+        { "label": "Retraite complémentaire", "rate": 0.09 },
+        { "label": "Invalidité‑décès", "rate": 0.005 },
+        { "label": "CSG déductible", "rate": 0.068 },
+        { "label": "CSG non déductible", "rate": 0.024 },
+        { "label": "CRDS", "rate": 0.005 },
+        { "label": "CFP", "rate": 0.0025 }
+      ]
+    }
+  },
+  "averageNet": {
+    "NON_CADRE": { "value": 1950, "source": "https://www.insee.fr/fr/statistiques/7457170" },
+    "CADRE": { "value": 3375, "source": "https://www.apec.fr/actualites/etudes/salaire-moyen-cadres.html" },
+    "FONCTION_PUBLIQUE": { "value": 2527, "source": "https://www.insee.fr/fr/statistiques/2381332" },
+    "PORTAGE_SALARIAL": { "value": 4000, "source": "https://syndicatportagesalarial.fr/branche/chiffres-portage-salarial/" },
+    "AUTO_ENTREPRENEUR": { "value": 1650, "source": "https://www.hellowork.com/fr-fr/medias/salaire-auto-entrepreneur.html" },
+    "PROFESSION_LIBERALE": { "value": 3000, "source": "https://www.insee.fr/fr/statistiques/4470782?sommaire=4470890" }
+  },
+  "benchmarks": {
+    "note": "Salaires nets mensuels (secteur privé, EQTP). Le SMIC net est calculé par le moteur.",
+    "median": 2100,
+    "average": 2600,
+    "top10": 4000,
+    "top1": 7000
+  }
+}

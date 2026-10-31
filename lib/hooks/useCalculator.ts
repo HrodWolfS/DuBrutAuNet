@@ -1,40 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  computeSalary,
+  RATES,
+  type DirectionType,
+  type PeriodType,
+  type StatusType,
+} from "@/shared/salary";
+import { useCallback, useMemo, useState } from "react";
 
-type Period = "hourly" | "daily" | "monthly" | "yearly";
-type Direction = "brut" | "net";
-export type StatusType =
-  | "NON_CADRE"
-  | "CADRE"
-  | "FONCTION_PUBLIQUE"
-  | "AUTO_ENTREPRENEUR"
-  | "PORTAGE_SALARIAL"
-  | "PROFESSION_LIBERALE";
+export type { StatusType };
 
-type RateJson = {
-  [key in keyof typeof DEFAULT_CHARGES]: { employee: number };
-};
-
-const SMIC_2025 = 11.65;
-const DEFAULT_HOURS = 35;
-
-const DEFAULT_CHARGES = {
-  NON_CADRE: 0.22,
-  CADRE: 0.22,
-  FONCTION_PUBLIQUE: 0.15,
-  AUTO_ENTREPRENEUR: 0.22,
-  PORTAGE_SALARIAL: 0.22,
-  PROFESSION_LIBERALE: 0.45,
-};
-
-/**
- * Inverse de : net = brut × (1 - charges)
- * Les champs "Net" représentent le salaire net avant prélèvement à la source,
- * conformément à la définition du bulletin de paie français.
- * Le PAS est appliqué séparément dans monthlyNetAfterTax / yearlyNetAfterTax.
- */
-function brutFromNet(net: number, charges: number) {
-  return net / (1 - charges);
-}
+type Values = Record<PeriodType, number | string>;
 
 export function useCalculator() {
   const [status, setStatus] = useState<StatusType>("NON_CADRE");
@@ -44,165 +19,31 @@ export function useCalculator() {
   // Source de vérité : { direction, period, value }
   // value est toujours la valeur brute non formatée
   const [input, setInput] = useState<{
-    direction: Direction;
-    period: Period;
+    direction: DirectionType;
+    period: PeriodType;
     value: number | string;
-  }>({ direction: "brut", period: "hourly", value: SMIC_2025 });
-  const [rates, setRates] = useState<RateJson | null>(null);
+  }>({ direction: "brut", period: "hourly", value: RATES.smic.hourly });
 
-  const hoursPerWeek = useMemo(
-    () => Math.round((DEFAULT_HOURS * workPercent) / 100),
-    [workPercent],
-  );
-  const charges = rates?.[status]?.employee ?? DEFAULT_CHARGES[status];
-  const tax = taxRate / 100;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const mod = await import("../../data/rates_fr_2025.json");
-        if (mod && mod.rates) {
-          // Merge pour garantir toutes les clés
-          const merged: RateJson = Object.keys(DEFAULT_CHARGES).reduce(
-            (acc, key) => {
-              acc[key as keyof RateJson] = mod.rates[key as keyof RateJson] ?? {
-                employee: DEFAULT_CHARGES[key as keyof typeof DEFAULT_CHARGES],
-              };
-              return acc;
-            },
-            {} as RateJson,
-          );
-          setRates(merged);
-        }
-      } catch {
-        // silent fallback
-      }
-    })();
-  }, []);
-
-  // Conversion helpers
-  const getBrutFrom = useCallback(
-    (value: number, period: Period) => {
-      if (period === "hourly") return value;
-      if (period === "daily")
-        return hoursPerWeek ? value / (hoursPerWeek / 7) : 0;
-      if (period === "monthly")
-        return hoursPerWeek ? value / ((hoursPerWeek * 52) / 12) : 0;
-      if (period === "yearly")
-        return hoursPerWeek ? value / (hoursPerWeek * 52) : 0;
-      return value;
-    },
-    [hoursPerWeek],
+  const result = useMemo(
+    () => computeSalary({ ...input, status, workPercent, taxRate, prime }),
+    [input, status, workPercent, taxRate, prime],
   );
 
-  // Calculs principaux
-  const { hourlyBrut, dailyBrut, monthlyBrut, yearlyBrut } = useMemo(() => {
-    if (input.value === "" || isNaN(Number(input.value))) {
-      return { hourlyBrut: 0, dailyBrut: 0, monthlyBrut: 0, yearlyBrut: 0 };
-    }
-    let baseBrut: number;
-    if (input.direction === "brut") {
-      baseBrut = getBrutFrom(Number(input.value), input.period);
-    } else {
-      const net = Number(input.value);
-      const brut = brutFromNet(net, charges);
-      baseBrut = getBrutFrom(brut, input.period);
-    }
-    return {
-      hourlyBrut: baseBrut,
-      dailyBrut: baseBrut * (hoursPerWeek / 7),
-      monthlyBrut: (baseBrut * hoursPerWeek * 52) / 12,
-      yearlyBrut: baseBrut * hoursPerWeek * 52,
-    };
-  }, [input, charges, getBrutFrom, hoursPerWeek]);
+  // Le champ en cours de saisie garde la valeur tapée, les autres sont calculés
+  const withInput = (direction: DirectionType, computed: Values): Values => {
+    if (input.direction !== direction) return computed;
+    return { ...computed, [input.period]: input.value.toString() };
+  };
 
-  // Net = brut - charges (sans impôt)
-  const calcNet = useCallback(
-    (brut: number | string) => {
-      if (brut === "" || isNaN(Number(brut))) return 0;
-      return Number(brut) * (1 - charges);
-    },
-    [charges],
-  );
-
-  const hourlyNet = useMemo(() => calcNet(hourlyBrut), [hourlyBrut, calcNet]);
-  const dailyNet = useMemo(() => calcNet(dailyBrut), [dailyBrut, calcNet]);
-  const monthlyNet = useMemo(
-    () => calcNet(monthlyBrut),
-    [monthlyBrut, calcNet],
-  );
-  const yearlyNet = useMemo(() => calcNet(yearlyBrut), [yearlyBrut, calcNet]);
-
-  // Net après impôt (pour la card Résultat uniquement)
-  const monthlyNetAfterTax = useMemo(
-    () => calcNet(monthlyBrut) * (1 - tax),
-    [monthlyBrut, calcNet, tax],
-  );
-  const yearlyNetAfterTax = useMemo(
-    () => calcNet(yearlyBrut) * (1 - tax),
-    [yearlyBrut, calcNet, tax],
-  );
-  const annualNetWithPrime = useMemo(
-    () => Number(yearlyNetAfterTax) + Number(prime || 0),
-    [yearlyNetAfterTax, prime],
-  );
-
-  // Valeurs pour l'interface utilisateur - non formatées
-  // Cela permet d'utiliser ces valeurs brutes pour la saisie
   const values = {
-    brut: {
-      hourly:
-        input.direction === "brut" && input.period === "hourly"
-          ? input.value.toString()
-          : hourlyBrut,
-      daily:
-        input.direction === "brut" && input.period === "daily"
-          ? input.value.toString()
-          : dailyBrut,
-      monthly:
-        input.direction === "brut" && input.period === "monthly"
-          ? input.value.toString()
-          : monthlyBrut,
-      yearly:
-        input.direction === "brut" && input.period === "yearly"
-          ? input.value.toString()
-          : yearlyBrut,
-    },
-    net: {
-      hourly:
-        input.direction === "net" && input.period === "hourly"
-          ? input.value.toString()
-          : hourlyNet,
-      daily:
-        input.direction === "net" && input.period === "daily"
-          ? input.value.toString()
-          : dailyNet,
-      monthly:
-        input.direction === "net" && input.period === "monthly"
-          ? input.value.toString()
-          : monthlyNet,
-      yearly:
-        input.direction === "net" && input.period === "yearly"
-          ? input.value.toString()
-          : yearlyNet,
-    },
-    // Valeurs numériques brutes pour les calculs
-    rawBrut: {
-      hourly: hourlyBrut,
-      daily: dailyBrut,
-      monthly: monthlyBrut,
-      yearly: yearlyBrut,
-    },
-    rawNet: {
-      hourly: hourlyNet,
-      daily: dailyNet,
-      monthly: monthlyNet,
-      yearly: yearlyNet,
-    },
+    brut: withInput("brut", result.brut),
+    net: withInput("net", result.net),
+    rawBrut: result.brut,
+    rawNet: result.net,
   };
 
   const handleValueChange = useCallback(
-    (value: string, period: Period, direction: Direction) => {
+    (value: string, period: PeriodType, direction: DirectionType) => {
       const cleanValue = value.replace(/[^\d.,]/g, "").replace(/,/g, ".");
       setInput({ direction, period, value: cleanValue });
     },
@@ -220,11 +61,12 @@ export function useCalculator() {
       status,
       taxRate,
       workPercent,
-      hoursPerWeek,
+      hoursPerWeek: result.hoursPerWeek,
       prime,
-      annualNetWithPrime,
-      monthlyNetAfterTax,
-      yearlyNetAfterTax,
+      charges: result.charges,
+      annualNetWithPrime: result.annualNetWithPrime,
+      monthlyNetAfterTax: result.monthlyNetAfterTax,
+      yearlyNetAfterTax: result.yearlyNetAfterTax,
     },
     {
       handleValueChange,

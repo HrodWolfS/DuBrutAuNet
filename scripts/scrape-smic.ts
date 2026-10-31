@@ -20,7 +20,7 @@ async function fetchSmic() {
   );
 
   const smic = await page.evaluate(() => {
-    const table = document.querySelector("#Cas-general-2025 table");
+    const table = document.querySelector('[id^="Cas-general"] table');
     if (!table) return null;
 
     const rows = Array.from(table.querySelectorAll("tbody tr"));
@@ -62,16 +62,17 @@ async function fetchSmic() {
     process.exit(1);
   }
 
-  const filePath = path.join(__dirname, "../data/rates_fr_2025.json");
+  const filePath = path.join(__dirname, "../shared/salary/rates_fr_2026.json");
   const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-  data.smic = smic;
-  data.lastUpdate = new Date().toISOString();
+  data.smic = { ...data.smic, ...smic };
+  data.lastUpdate = new Date().toISOString().slice(0, 10);
 
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n");
   console.log("✅ SMIC mis à jour avec succès !");
 }
 
 fetchSmic().catch((error) => {
   console.error("❌ Erreur pendant la récupération du SMIC :", error);
+  process.exit(1);
 });

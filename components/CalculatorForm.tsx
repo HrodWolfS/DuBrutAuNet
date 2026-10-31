@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { StatusType, useCalculator } from "@/lib/hooks/useCalculator";
+import { RATES } from "@/shared/salary";
 import { formSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, RotateCcw, SlidersHorizontal, TrendingUp } from "lucide-react";
@@ -79,7 +80,7 @@ export default function CalculatorForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: 11.65,
+      amount: RATES.smic.hourly,
       unit: "hourly",
       direction: "brut",
       status: "NON_CADRE",
