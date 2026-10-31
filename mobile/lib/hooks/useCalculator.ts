@@ -6,7 +6,12 @@ import {
   type PeriodType,
   type StatusType,
 } from "../../../shared/salary";
-import { loadPrefs, savePrefs, clearPrefs } from "../storage";
+import {
+  loadPrefs,
+  savePrefs,
+  clearPrefs,
+  type PersistedPrefs,
+} from "../storage";
 
 export type { DirectionType, PeriodType, StatusType };
 
@@ -52,6 +57,7 @@ export interface CalculatorHandlers {
   setTaxRate: (rate: number) => void;
   setWorkPercent: (percent: number) => void;
   setPrime: (prime: number) => void;
+  restore: (prefs: PersistedPrefs) => void;
 }
 
 const DEFAULT_INPUT: InputState = {
@@ -72,16 +78,18 @@ export function useCalculator(): [
   const [input, setInput] = useState<InputState>(DEFAULT_INPUT);
   const [isReady, setIsReady] = useState<boolean>(false);
 
+  const restore = (prefs: PersistedPrefs) => {
+    setStatusState(prefs.status);
+    setTaxRateState(prefs.taxRate);
+    setWorkPercentState(prefs.workPercent);
+    setPrimeState(prefs.prime);
+    setInput(prefs.input);
+  };
+
   // Load persisted prefs on mount
   useEffect(() => {
     loadPrefs().then((saved) => {
-      if (saved) {
-        setStatusState(saved.status);
-        setTaxRateState(saved.taxRate);
-        setWorkPercentState(saved.workPercent);
-        setPrimeState(saved.prime);
-        setInput(saved.input);
-      }
+      if (saved) restore(saved);
       setIsReady(true);
     });
   }, []);
@@ -153,6 +161,7 @@ export function useCalculator(): [
     setTaxRate,
     setWorkPercent,
     setPrime,
+    restore,
   };
 
   return [state, handlers, isReady];
