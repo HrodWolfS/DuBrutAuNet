@@ -4,9 +4,9 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   useColorScheme,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCalculatorContext } from "../../context/CalculatorContext";
 import { ChargeBreakdown } from "../../components/ChargeBreakdown";
 import { SocialPyramid } from "../../components/SocialPyramid";
@@ -30,7 +30,7 @@ export default function DetailsScreen() {
   const { values, status, monthlyNetAfterTax } = state;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
