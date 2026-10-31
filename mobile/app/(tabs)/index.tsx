@@ -7,11 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   useColorScheme,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Share,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
 import { useCalculatorContext } from "../../context/CalculatorContext";
@@ -177,7 +177,7 @@ export default function CalculatorScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
