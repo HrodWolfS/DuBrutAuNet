@@ -65,6 +65,21 @@ describe("computeSalary", () => {
     expect(r.brut.daily).toBeCloseTo(86.17, 2);
   });
 
+  it("convertit une saisie journalière brute et nette", () => {
+    const brut = computeSalary({ ...base, period: "daily", value: 140 });
+    const net = computeSalary({
+      ...base,
+      direction: "net",
+      period: "daily",
+      value: brut.net.daily,
+    });
+
+    expect(brut.brut.hourly).toBeCloseTo(20, 6);
+    expect(brut.brut.monthly).toBeCloseTo(3033.33, 2);
+    expect(net.net.daily).toBeCloseTo(brut.net.daily, 6);
+    expect(net.brut.daily).toBeCloseTo(140, 6);
+  });
+
   it("cadre à 3 000 € brut mensuel → 2 264,99 € net", () => {
     const r = computeSalary({ ...base, status: "CADRE", value: 3000 });
     expect(r.net.monthly).toBeCloseTo(2264.99, 1);

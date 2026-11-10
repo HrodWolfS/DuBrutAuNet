@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { StatusType, useCalculator } from "@/lib/hooks/useCalculator";
-import { RATES } from "@/shared/salary";
+import { RATES, type PeriodType } from "@/shared/salary";
 import { formSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, RotateCcw, SlidersHorizontal, TrendingUp } from "lucide-react";
@@ -90,7 +90,7 @@ export default function CalculatorForm() {
 
   const handleInputChange = (
     value: string,
-    field: "hourly" | "monthly" | "yearly",
+    field: PeriodType,
     type: "brut" | "net",
   ) => {
     const clean = value.replace(/[^\d.,]/g, "").replace(/,/g, ".");
@@ -133,6 +133,12 @@ export default function CalculatorForm() {
       field: "hourly" as const,
     },
     {
+      id: "daily-brut",
+      label: "Journalier brut",
+      value: values.brut.daily,
+      field: "daily" as const,
+    },
+    {
       id: "monthly-brut",
       label: "Mensuel brut",
       value: values.brut.monthly,
@@ -152,6 +158,12 @@ export default function CalculatorForm() {
       label: "Horaire net",
       value: values.net.hourly,
       field: "hourly" as const,
+    },
+    {
+      id: "daily-net",
+      label: "Journalier net",
+      value: values.net.daily,
+      field: "daily" as const,
     },
     {
       id: "monthly-net",
