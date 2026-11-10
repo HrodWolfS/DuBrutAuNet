@@ -149,6 +149,9 @@ export default function CalculatorScreen() {
         case "hourly":
           num = values.hourlyBrut;
           break;
+        case "daily":
+          num = values.dailyBrut;
+          break;
         case "monthly":
           num = values.monthlyBrut;
           break;
@@ -162,6 +165,9 @@ export default function CalculatorScreen() {
       switch (period) {
         case "hourly":
           num = values.hourlyNet;
+          break;
+        case "daily":
+          num = values.dailyNet;
           break;
         case "monthly":
           num = values.monthlyNet;
@@ -224,6 +230,18 @@ export default function CalculatorScreen() {
                   <Text style={styles.inputUnit}>€</Text>
                 </View>
                 <View style={styles.inputRow}>
+                  <Text style={styles.inputLabel}>Journalier</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={getInputValue("brut", "daily")}
+                    onChangeText={(v) => handleValueChange("brut", "daily", v)}
+                    keyboardType="decimal-pad"
+                    selectTextOnFocus
+                    placeholderTextColor={theme.mutedForeground}
+                  />
+                  <Text style={styles.inputUnit}>€</Text>
+                </View>
+                <View style={styles.inputRow}>
                   <Text style={styles.inputLabel}>Mensuel</Text>
                   <TextInput
                     style={styles.input}
@@ -262,6 +280,18 @@ export default function CalculatorScreen() {
                     style={styles.input}
                     value={getInputValue("net", "hourly")}
                     onChangeText={(v) => handleValueChange("net", "hourly", v)}
+                    keyboardType="decimal-pad"
+                    selectTextOnFocus
+                    placeholderTextColor={theme.mutedForeground}
+                  />
+                  <Text style={styles.inputUnit}>€</Text>
+                </View>
+                <View style={styles.inputRow}>
+                  <Text style={styles.inputLabel}>Journalier</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={getInputValue("net", "daily")}
+                    onChangeText={(v) => handleValueChange("net", "daily", v)}
                     keyboardType="decimal-pad"
                     selectTextOnFocus
                     placeholderTextColor={theme.mutedForeground}
