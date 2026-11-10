@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" width="900" height="256" role="img" aria-labelledby="title-a-lockup-v2">
+  <title id="title-a-lockup-v2">Du Brut au Net — Passage lockup exploration, version 2</title>
+  <g transform="translate(16 40) scale(.6875)">
+    <path fill="#111111" fill-rule="evenodd" d="M48 24H184L232 72V208A24 24 0 0 1 208 232H48A24 24 0 0 1 24 208V48A24 24 0 0 1 48 24ZM68 184V72H100L156 140V72H188V184H156L100 116V184Z"/>
+  </g>
+  <text x="224" y="151" fill="#111111" font-family="Geist, Arial, sans-serif" font-size="72" font-weight="650" letter-spacing="-2">Du Brut au Net</text>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title-c">
+  <title id="title-c">Du Brut au Net — concept Monogramme bn</title>
+  <path fill="#111111" fill-rule="evenodd" d="M24 32H60V93A62 62 0 1 1 24 149ZM60 149A29 29 0 1 0 118 149A29 29 0 0 0 60 149Z"/>
+  <path fill="#111111" d="M140 96H176V112C187 99 201 92 217 92C241 92 252 110 252 140V224H216V148C216 131 208 124 196 124C184 124 176 134 176 152V224H140Z"/>
+</svg>

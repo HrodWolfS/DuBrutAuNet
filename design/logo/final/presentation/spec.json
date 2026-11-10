@@ -1,0 +1,35 @@
+{
+  "brand": "Du Brut au Net",
+  "tagline": "Comprendre son salaire, simplement",
+  "brief": "Une identité claire et fiable pour un simulateur français qui rend le passage du salaire brut au salaire net immédiatement compréhensible.",
+  "adjectives": ["clair", "fiable", "direct"],
+  "industry": "finance",
+  "mockups": ["payment-card", "app-icon", "website", "social", "business-card", "favicon-tab"],
+  "nav": ["Simulateur", "Blog", "À propos"],
+  "brand_color": "#16A34A",
+  "tile_color": "#16A34A",
+  "greyscale": false,
+  "final": true,
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Passage net",
+      "symbol": "../source/du-brut-au-net-symbol-color.svg",
+      "lockup": "../source/du-brut-au-net-logo-horizontal-color.svg",
+      "stacked": "../source/du-brut-au-net-logo-stacked-color.svg",
+      "avatar": "../source/du-brut-au-net-symbol-small.svg",
+      "symbol_on_tile": "../source/du-brut-au-net-symbol-white-optical.svg",
+      "stacked_on_tile": "../source/du-brut-au-net-logo-stacked-dark.svg",
+      "symbol_on_dark": "../source/du-brut-au-net-symbol-white-optical.svg",
+      "lockup_on_dark": "../source/du-brut-au-net-logo-horizontal-dark.svg",
+      "stacked_on_dark": "../source/du-brut-au-net-logo-stacked-dark.svg",
+      "idea": "Le N du net apparaît dans la matière brute.",
+      "rationale": [
+        "La forme pleine évoque la valeur brute avant transformation.",
+        "Le N dessiné en réserve rend le net lisible sans symbole financier générique.",
+        "Le coin coupé suggère le passage et donne une silhouette reconnaissable en favicon."
+      ]
+    }
+  ],
+  "recommendation": "Adopter Passage net comme signature principale, avec le symbole seul pour les favicons, avatars et petits formats."
+}

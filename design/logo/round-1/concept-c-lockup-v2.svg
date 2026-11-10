@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" width="900" height="256" role="img" aria-labelledby="title-c-lockup-v2">
+  <title id="title-c-lockup-v2">Du Brut au Net — Monogramme lockup exploration, version 2</title>
+  <g transform="translate(16 40) scale(.6875)">
+    <path fill="#111111" fill-rule="evenodd" d="M14 32H50V93A62 62 0 1 1 14 149ZM50 149A29 29 0 1 0 108 149A29 29 0 0 0 50 149Z"/>
+    <path fill="#111111" d="M130 96H166V112C177 99 191 92 207 92C231 92 242 110 242 140V224H206V148C206 131 198 124 186 124C174 124 166 134 166 152V224H130Z"/>
+  </g>
+  <text x="224" y="151" fill="#111111" font-family="Geist, Arial, sans-serif" font-size="72" font-weight="600" letter-spacing="-2">du brut au net</text>
+</svg>

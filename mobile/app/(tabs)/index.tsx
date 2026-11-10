@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
+  Image,
   Text,
   TextInput,
   StyleSheet,
@@ -195,7 +196,14 @@ export default function CalculatorScreen() {
         >
           {/* Header */}
           <View style={styles.pageHeader}>
-            <Text style={styles.pageTitle}>Du Brut au Net</Text>
+            <View style={styles.brandLockup}>
+              <Image
+                source={require("../../assets/brand-symbol.png")}
+                style={styles.brandSymbol}
+                accessibilityIgnoresInvertColors
+              />
+              <Text style={styles.pageTitle}>Du Brut au Net</Text>
+            </View>
             <TouchableOpacity
               onPress={onReset}
               style={styles.resetButton}
@@ -528,6 +536,15 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       alignItems: "center",
       justifyContent: "space-between",
       marginBottom: 16,
+    },
+    brandLockup: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    brandSymbol: {
+      width: 30,
+      height: 30,
     },
     pageTitle: {
       fontSize: 22,

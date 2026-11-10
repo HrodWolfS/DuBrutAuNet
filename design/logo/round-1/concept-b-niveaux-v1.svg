@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title-b">
+  <title id="title-b">Du Brut au Net — concept Deux niveaux</title>
+  <path fill="#111111" d="M199 57A100 100 0 1 0 199 199L171 171A60 60 0 1 1 171 85Z"/>
+  <rect x="44" y="91" width="145" height="28" rx="14" fill="#111111"/>
+  <rect x="44" y="137" width="111" height="28" rx="14" fill="#111111"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">Symbole adaptatif Du Brut au Net</title>
+  <g transform="translate(44 44) scale(.65625)">
+    <path fill="#FFFFFF" fill-rule="evenodd" d="M44 20H180L236 76V212A24 24 0 0 1 212 236H44A24 24 0 0 1 20 212V44A24 24 0 0 1 44 20ZM62 190V66H100L156 136V66H194V190H156L100 120V190Z"/>
+  </g>
+</svg>

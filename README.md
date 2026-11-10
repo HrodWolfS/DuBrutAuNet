@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/brand/du-brut-au-net-logo-horizontal.svg" alt="Du Brut au Net" width="420">
+</p>
+
 # Du Brut au Net 🇫🇷
 
 Convertisseur de salaire brut ↔ net pour la France, avec support des différents statuts (cadre, non-cadre, fonction publique, portage salarial, auto-entrepreneur, profession libérale).

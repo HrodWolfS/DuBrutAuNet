@@ -1,6 +1,7 @@
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Footer } from "./footer";
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dubrutaunet.fr"),
   title: "Du Brut au Net — Simulateur Salaire Brut/Net",
   description:
     "Simulateur de conversion salaire brut/net, SMIC, cotisations, impôt, statuts (CDI, CDD, fonction publique, auto-entrepreneur) — 100% gratuit, sans inscription.",
@@ -28,9 +30,9 @@ export const metadata: Metadata = {
     siteName: "Du Brut au Net",
     images: [
       {
-        url: "/android-chrome-512x512.png",
-        width: 512,
-        height: 512,
+        url: "/og-du-brut-au-net.png",
+        width: 1200,
+        height: 630,
         alt: "Logo Du Brut au Net",
       },
     ],
@@ -42,7 +44,7 @@ export const metadata: Metadata = {
     title: "Du Brut au Net — Simulateur Salaire Brut/Net",
     description:
       "Simulateur de conversion salaire brut/net, SMIC, cotisations, impôt, statuts (CDI, CDD, fonction publique, auto-entrepreneur) — 100% gratuit, sans inscription.",
-    images: ["/android-chrome-512x512.png"],
+    images: ["/og-du-brut-au-net.png"],
   },
 };
 
@@ -80,9 +82,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="/apple-touch-icon.png"
         />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1e293b" />
-        <meta name="msapplication-TileColor" content="#1e293b" />
-        <meta name="theme-color" content="#1e293b" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#16a34a" />
+        <meta name="msapplication-TileColor" content="#16a34a" />
+        <meta name="theme-color" content="#16a34a" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         {/* SEO meta tags */}
         <meta
@@ -97,7 +99,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           property="og:description"
           content="Simulateur de conversion salaire brut/net, SMIC, cotisations, impôt, statuts (CDI, CDD, fonction publique, auto-entrepreneur) — 100% gratuit, sans inscription."
         />
-        <meta property="og:image" content="/android-chrome-512x512.png" />
+        <meta property="og:image" content="/og-du-brut-au-net.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dubrutaunet.fr" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -109,15 +111,26 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           name="twitter:description"
           content="Simulateur de conversion salaire brut/net, SMIC, cotisations, impôt, statuts (CDI, CDD, fonction publique, auto-entrepreneur) — 100% gratuit, sans inscription."
         />
-        <meta name="twitter:image" content="/android-chrome-512x512.png" />
+        <meta name="twitter:image" content="/og-du-brut-au-net.png" />
       </head>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
         <header className="sticky top-0 z-50 w-full bg-background/80 border-b border-border flex items-center justify-between px-6 py-3 backdrop-blur">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors"
+            aria-label="Du Brut au Net — Accueil"
+            className="group flex items-center gap-2"
           >
-            Du Brut au Net
+            <Image
+              src="/brand/du-brut-au-net-symbol.svg"
+              alt=""
+              width={32}
+              height={32}
+              priority
+              className="size-8"
+            />
+            <span className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
+              Du Brut au Net
+            </span>
           </Link>
           <div className="flex items-center space-x-4">
             <Link
