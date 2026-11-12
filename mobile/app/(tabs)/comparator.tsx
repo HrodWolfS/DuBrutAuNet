@@ -4,9 +4,9 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   useColorScheme,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCalculatorContext } from "../../context/CalculatorContext";
 import { FreelanceComparator } from "../../components/FreelanceComparator";
 import { getTheme } from "../../constants/theme";
@@ -31,7 +31,7 @@ export default function ComparatorScreen() {
   const isAE = status === "AUTO_ENTREPRENEUR";
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
