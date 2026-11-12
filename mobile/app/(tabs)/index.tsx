@@ -8,11 +8,11 @@ import {
   ScrollView,
   TouchableOpacity,
   useColorScheme,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Share,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
 import { useCalculatorContext } from "../../context/CalculatorContext";
@@ -184,7 +184,7 @@ export default function CalculatorScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -238,7 +238,7 @@ export default function CalculatorScreen() {
                   <Text style={styles.inputUnit}>€</Text>
                 </View>
                 <View style={styles.inputRow}>
-                  <Text style={styles.inputLabel}>Journalier</Text>
+                  <Text style={styles.inputLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Journalier</Text>
                   <TextInput
                     style={styles.input}
                     value={getInputValue("brut", "daily")}
@@ -295,7 +295,7 @@ export default function CalculatorScreen() {
                   <Text style={styles.inputUnit}>€</Text>
                 </View>
                 <View style={styles.inputRow}>
-                  <Text style={styles.inputLabel}>Journalier</Text>
+                  <Text style={styles.inputLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Journalier</Text>
                   <TextInput
                     style={styles.input}
                     value={getInputValue("net", "daily")}
@@ -603,7 +603,7 @@ function makeStyles(theme: ReturnType<typeof getTheme>) {
       marginBottom: 10,
     },
     inputLabel: {
-      width: 50,
+      width: 56,
       fontSize: 11,
       color: theme.mutedForeground,
     },
